@@ -15,7 +15,6 @@ import { Button } from '@/components/ui/button'
 import { buildPaymentTransaction } from '@/lib/stellar-helper'
 import { signWithFreighter } from '@/lib/wallet'
 import { submitTransaction } from '@/lib/horizon'
-import { recordContribution } from '@/lib/soroban-client'
 import { truncateAddress, stellarExpertLink, mapStellarError } from '@/lib/utils'
 
 interface ConfirmModalProps {
@@ -55,10 +54,19 @@ export function ConfirmModal({
       // 4. Submit to Horizon
       const txHash = await submitTransaction(signedXDR)
 
-      // 5. Fire-and-forget Soroban recording
+      // 5. Fire-and-forget Soroban recording via server-side API route
+      // Pool keypair signs on server — no second Freighter prompt needed
       const now = BigInt(Math.floor(Date.now() / 1000))
       const amountStroops = BigInt(100_000_000) // 10 XLM in stroops
-      recordContribution({ sender, amount_stroops: amountStroops, timestamp: now })
+      void fetch('/api/record-contribution', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sender,
+          amountStroops: amountStroops.toString(),
+          timestamp: now.toString(),
+        }),
+      }).catch((e) => console.error('[ConfirmModal] Soroban recording failed:', e))
 
       // 6. Notify success with explorer link
       toast.success('Contribution sent! View on Stellar Expert', {

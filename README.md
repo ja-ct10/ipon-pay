@@ -233,8 +233,8 @@ Both Soroban calls are **fire-and-forget** — a failed RPC call does not affect
 
 **Deployed Contract (Testnet):**
 
-- Contract ID: `CDB7SE7O5VMN7DQSKCHYG6TVXTDJWULYKXZTSZQVO4DGRGYRFIQSJ44P`
-- [View Contract on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDB7SE7O5VMN7DQSKCHYG6TVXTDJWULYKXZTSZQVO4DGRGYRFIQSJ44P)
+- Contract ID: `CAQT4K4DWKWK45TR7FPBZFOJXLZAPWZXQGOPQYNIKH5PXOUH52YPNXY7`
+- [View Contract on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CAQT4K4DWKWK45TR7FPBZFOJXLZAPWZXQGOPQYNIKH5PXOUH52YPNXY7)
 
 ---
 
