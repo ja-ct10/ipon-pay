@@ -118,6 +118,9 @@ export function Navbar() {
                   <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" />
                 </span>
                 {truncateAddress(state.address)}
+                <span className="ml-1 rounded-full bg-amber-500/15 border border-amber-500/25 px-1.5 py-0 text-[10px] font-medium text-amber-400 leading-4">
+                  Testnet
+                </span>
               </span>
             )}
 
@@ -179,6 +182,9 @@ export function Navbar() {
                   title={state.address}
                 >
                   {truncateAddress(state.address)}
+                </span>
+                <span className="rounded-full bg-amber-500/15 border border-amber-500/25 px-1.5 py-0 text-[10px] font-medium text-amber-400 leading-4">
+                  Testnet
                 </span>
               </div>
             )}

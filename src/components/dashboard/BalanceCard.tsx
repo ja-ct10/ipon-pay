@@ -76,9 +76,16 @@ export function BalanceCard({ className }: BalanceCardProps) {
               </p>
             )}
 
-            <span className="text-xs text-muted-foreground mt-0.5">
-              on Stellar Testnet
-            </span>
+            {state.address && (
+              <a
+                href={`https://stellar.expert/explorer/testnet/account/${state.address}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-0.5 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-emerald-400 transition-colors w-fit"
+              >
+                View on Explorer ↗
+              </a>
+            )}
           </div>
 
           {/* Right: wallet icon */}
