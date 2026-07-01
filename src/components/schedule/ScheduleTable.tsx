@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { CompletionBanner } from './CompletionBanner'
 import { CycleRow } from './CycleRow'
 import type { CycleEntry } from '@/lib/types'
 import { GROUP_DATA } from '@/lib/mock-data'
@@ -22,9 +21,6 @@ export function ScheduleTable({
   targetPoolAmount = GROUP_DATA.targetPoolAmount,
 }: ScheduleTableProps) {
   const [isPayingOut, setIsPayingOut] = useState(false)
-
-  const allCompleted =
-    entries.length > 0 && entries.every((e) => e.status === 'completed')
 
   const poolIsFull = poolCollected >= targetPoolAmount
 
@@ -72,7 +68,6 @@ export function ScheduleTable({
 
   return (
     <div className="space-y-4">
-      {allCompleted && <CompletionBanner />}
       <div className="overflow-x-auto rounded-2xl border border-white/7">
         <table className="w-full text-left" aria-label="Paluwagan cycle schedule">
           <thead>

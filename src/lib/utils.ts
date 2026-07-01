@@ -117,30 +117,37 @@ export function stellarExpertLink(
 import type { CycleEntry } from './types';
 
 /**
- * Derive a CycleEntry schedule from the dynamic member list.
- * Join order determines payout order (first contributor = first to receive).
- * payoutRecipients is the ordered list of addresses that have already received
- * a payout (from fetchPayoutHistory). Its length determines the current cycle index.
+ * Derive the payout schedule for the CURRENT round of the Paluwagan.
+ *
+ * A Paluwagan cycles indefinitely — after all N members receive a payout once,
+ * the rotation restarts for round 2, round 3, etc.
+ *
+ * @param members          - Ordered member list (join order = payout order)
+ * @param payoutRecipients - All historical payout recipient addresses (ordered, oldest first)
  */
 export function deriveSchedule(members: Member[], payoutRecipients: string[] = []): CycleEntry[] {
   if (members.length === 0) return []
 
-  // How many members have already received a payout determines where we are
-  const currentCycleIndex = payoutRecipients.length
+  const N = members.length
+  const totalPayouts = payoutRecipients.length
+
+  // Which round we are on (1-based) and where within that round
+  const currentRound = Math.floor(totalPayouts / N) + 1
+  const positionInRound = totalPayouts % N // payouts completed in the current round
 
   return members.map((member, i) => {
     let status: 'completed' | 'current' | 'upcoming'
-    if (i < currentCycleIndex) {
+    if (i < positionInRound) {
       status = 'completed'
-    } else if (i === currentCycleIndex) {
+    } else if (i === positionInRound) {
       status = 'current'
     } else {
       status = 'upcoming'
     }
 
     return {
-      cycleNumber: i + 1,
-      week: `Cycle ${i + 1}`,
+      cycleNumber: (currentRound - 1) * N + i + 1, // global ever-incrementing cycle number
+      week: `Round ${currentRound}, Cycle ${i + 1}`,
       recipientName: member.name,
       recipientAddress: member.address,
       status,

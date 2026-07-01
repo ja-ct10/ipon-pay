@@ -50,6 +50,11 @@ export default function SchedulePage() {
       <main className="container mx-auto px-4 py-8 space-y-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Payout Schedule</h1>
+          {schedule.length > 0 && (
+            <p className="text-xs text-muted-foreground mt-0.5 font-medium uppercase tracking-wider">
+              Round {Math.ceil(schedule[0].cycleNumber / schedule.length)}
+            </p>
+          )}
           <p className="text-sm text-muted-foreground mt-1">
             Pool: <strong>{poolCollected.toFixed(2)}</strong> / {targetPoolAmount} XLM
             {poolCollected >= targetPoolAmount && schedule.length > 0 && (
