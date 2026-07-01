@@ -10,15 +10,19 @@ IponPay brings the centuries-old Filipino rotating savings tradition (Paluwagan)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8)](https://tailwindcss.com)
 [![Soroban](https://img.shields.io/badge/Soroban-Smart%20Contract-purple)](https://soroban.stellar.org)
 
-> 📸 **Screenshots** — Replace the placeholder images below with actual screenshots after deployment.
+<img width="1918" height="1013" alt="image" src="https://github.com/user-attachments/assets/9896c1f7-51f3-434a-ab8f-8e7e58cf0e77" />
 
-![Dashboard — Pool progress, member list, and balances](./public/placeholder-dashboard.png)
+<img width="1918" height="1012" alt="image" src="https://github.com/user-attachments/assets/3cec521d-09a2-4ac0-968d-98d0c3a416ed" />
 
-![Contribute — Send 10 XLM to the pool](./public/placeholder-contribute.png)
+<img width="1918" height="1015" alt="image" src="https://github.com/user-attachments/assets/43d16b7f-eda9-4eac-adec-2119a43ac6b4" />
 
-![History — Real-time transaction log with Stellar Expert links](./public/placeholder-history.png)
+<img width="1918" height="1018" alt="image" src="https://github.com/user-attachments/assets/7508f4c6-86a4-419f-8948-a70d8a5b21ff" />
 
-![Schedule — Payout rotation and Claim Payout button](./public/placeholder-schedule.png)
+<img width="1918" height="1020" alt="image" src="https://github.com/user-attachments/assets/a9d88c24-0709-4a38-8758-b40033998cae" />
+
+<img width="1918" height="1013" alt="image" src="https://github.com/user-attachments/assets/969f01f4-8218-44d2-9f50-4b416087ad53" />
+
+<img width="1918" height="1007" alt="image" src="https://github.com/user-attachments/assets/4028f16e-0871-402c-96da-08423cd03f2c" />
 
 ---
 
