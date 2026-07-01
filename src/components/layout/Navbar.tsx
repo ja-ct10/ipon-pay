@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Menu,
   X,
-  Coins,
   LayoutDashboard,
   SendHorizonal,
   Clock,
@@ -56,9 +55,14 @@ export function Navbar() {
             aria-label="IponPay home"
             className="group flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 rounded-lg"
           >
-            {/* Coin icon with subtle glow ring */}
-            <span className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/15 ring-1 ring-emerald-500/30 transition-all duration-200 group-hover:bg-emerald-500/25 group-hover:ring-emerald-500/50">
-              <Coins className="size-3.5 text-emerald-400" strokeWidth={2} aria-hidden="true" />
+            {/* SVG logo mark */}
+            <span className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/15 ring-1 ring-emerald-500/30 transition-all duration-200 group-hover:bg-emerald-500/25 group-hover:ring-emerald-500/50 overflow-hidden">
+              <img
+                src="/logo-mark.svg"
+                alt=""
+                aria-hidden="true"
+                className="size-5 object-contain"
+              />
             </span>
             <span className="text-sm font-semibold tracking-tight text-foreground">
               Ipon<span className="text-emerald-400">Pay</span>

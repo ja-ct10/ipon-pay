@@ -19,6 +19,26 @@ export const metadata: Metadata = {
   title: 'IponPay — Blockchain Paluwagan',
   description:
     'A blockchain-powered rotating savings platform built on the Stellar network.',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.svg', sizes: '180x180', type: 'image/svg+xml' },
+    ],
+  },
+  openGraph: {
+    title: 'IponPay — Blockchain Paluwagan',
+    description: 'A blockchain-powered rotating savings platform built on the Stellar network.',
+    images: [{ url: '/og-image.svg', width: 1200, height: 630 }],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'IponPay — Blockchain Paluwagan',
+    description: 'A blockchain-powered rotating savings platform built on the Stellar network.',
+    images: ['/og-image.svg'],
+  },
 }
 
 export default function RootLayout({

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <!-- Solid dark background -->
+  <rect width="180" height="180" rx="40" fill="#0f172a"/>
+  <!-- Coin outer rim ellipse -->
+  <ellipse cx="90" cy="86" rx="46" ry="26" fill="none" stroke="#10b981" stroke-width="4"/>
+  <!-- Coin top arc (3D rim) -->
+  <path d="M44 86 Q90 56 136 86" fill="none" stroke="#10b981" stroke-width="4" stroke-opacity="0.8"/>
+  <!-- Coin bottom arc -->
+  <path d="M44 86 Q90 116 136 86" fill="none" stroke="#10b981" stroke-width="2.5" stroke-opacity="0.4"/>
+  <!-- Coin inner ellipse -->
+  <ellipse cx="90" cy="86" rx="28" ry="15" fill="none" stroke="#10b981" stroke-width="2.5"/>
+  <!-- Peso symbol centered -->
+  <text x="90" y="95" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-weight="700" font-size="26" fill="#10b981">₱</text>
+  <!-- Upward arrow above coin -->
+  <line x1="90" y1="46" x2="90" y2="56" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.8"/>
+  <polyline points="82,54 90,46 98,54" fill="none" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.8"/>
+  <!-- IponPay wordmark below -->
+  <text x="90" y="145" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="22" fill="#f0fdf4">Ipon<tspan fill="#10b981">Pay</tspan></text>
+</svg>

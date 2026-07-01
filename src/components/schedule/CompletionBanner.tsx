@@ -10,7 +10,7 @@ export function CompletionBanner() {
       aria-live="polite"
       className="bg-warm-gold/20 border border-warm-gold text-warm-gold rounded-xl p-4 text-center font-semibold"
     >
-      🎉 This Paluwagan round is complete! All members have received the pool.
+      This Paluwagan round is complete! All members have received the pool.
     </motion.div>
   )
 }

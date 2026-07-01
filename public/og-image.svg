@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <!-- Emerald radial gradient overlay -->
+    <radialGradient id="glow" cx="50%" cy="0%" r="55%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Full dark background -->
+  <rect width="1200" height="630" fill="#09101a"/>
+
+  <!-- Radial glow overlay -->
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- Logo mark background square -->
+  <rect x="516" y="80" width="168" height="168" rx="36" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-opacity="0.35" stroke-width="2"/>
+
+  <!-- Coin outer rim -->
+  <ellipse cx="600" cy="172" rx="56" ry="32" fill="none" stroke="#10b981" stroke-width="3.5"/>
+  <!-- Coin top arc -->
+  <path d="M544 172 Q600 136 656 172" fill="none" stroke="#10b981" stroke-width="3.5" stroke-opacity="0.8"/>
+  <!-- Coin bottom arc -->
+  <path d="M544 172 Q600 208 656 172" fill="none" stroke="#10b981" stroke-width="2" stroke-opacity="0.35"/>
+  <!-- Coin inner ellipse -->
+  <ellipse cx="600" cy="172" rx="34" ry="18" fill="none" stroke="#10b981" stroke-width="2.5"/>
+  <!-- Peso symbol -->
+  <text x="600" y="183" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-weight="700" font-size="28" fill="#10b981">₱</text>
+
+  <!-- Upward arrow above coin -->
+  <line x1="600" y1="98" x2="600" y2="114" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-opacity="0.7"/>
+  <polyline points="590,112 600,100 610,112" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.7"/>
+
+  <!-- IponPay heading -->
+  <text x="600" y="328" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-weight="700" font-size="72" fill="#f0fdf4">Ipon<tspan fill="#10b981">Pay</tspan></text>
+
+  <!-- Subtitle -->
+  <text x="600" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-weight="400" font-size="28" fill="#6b7280">Blockchain Paluwagan</text>
+
+  <!-- Divider line -->
+  <line x1="480" y1="424" x2="720" y2="424" stroke="#1f2937" stroke-width="1"/>
+
+  <!-- Bottom tagline -->
+  <text x="600" y="464" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-weight="400" font-size="18" fill="#374151">Powered by Stellar + Soroban</text>
+</svg>
