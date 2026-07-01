@@ -139,16 +139,19 @@ export async function POST(request: Request) {
     const result = await server.submitTransaction(tx)
 
     // Fire-and-forget: record the payout on-chain via Soroban contract.
-    // This does not block the HTTP response — errors are caught and logged.
+    // Small delay lets the Soroban RPC sync the pool account's updated sequence number
+    // after the Horizon payout transaction consumed it.
     if (poolSecret) {
-      void recordPayout({
-        poolAddress,
-        poolSecret,
-        recipient: recipientAddress,
-        amountStroops: BigInt(Math.round(serverAmount * 10_000_000)),
-        cycleNumber: 1, // simplified — always cycle 1 for now
-        timestamp: BigInt(Math.floor(Date.now() / 1000)),
-      })
+      setTimeout(() => {
+        void recordPayout({
+          poolAddress,
+          poolSecret,
+          recipient: recipientAddress,
+          amountStroops: BigInt(Math.round(serverAmount * 10_000_000)),
+          cycleNumber: 1,
+          timestamp: BigInt(Math.floor(Date.now() / 1000)),
+        })
+      }, 5000) // wait 5s for Soroban RPC to catch up
     }
 
     return Response.json({ txHash: result.hash })

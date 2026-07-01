@@ -96,6 +96,7 @@ export async function recordPayout(params: {
     const rpcServer = new StellarSdk.rpc.Server(rpcUrl, { allowHttp: false })
     const contract = new StellarSdk.Contract(contractId)
 
+    // Fetch account fresh each attempt to get current sequence number
     const account = await rpcServer.getAccount(poolAddress)
 
     const tx = new StellarSdk.TransactionBuilder(
