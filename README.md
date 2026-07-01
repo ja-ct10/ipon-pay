@@ -35,7 +35,6 @@ IponPay is a **decentralized Paluwagan platform** that allows a group of people 
 
 - No accounts or sign-ups needed — connect your Freighter wallet and you're in
 - Any wallet that contributes to the pool is automatically added to the member list
-- Member identity shown as truncated address format: `GCWQ...6YU6`
 
 💰 **Live Pool Tracking**
 
@@ -54,12 +53,6 @@ IponPay is a **decentralized Paluwagan platform** that allows a group of people 
 - All contributions submitted to Stellar Testnet via Horizon API
 - Each transaction recorded in a Soroban smart contract (`IponPayContract`)
 - Every tx hash links to Stellar Expert for independent verification
-
-🎨 **Polished UI**
-
-- Dark/light mode with glassmorphism card styling
-- Framer Motion page transitions and confetti celebration on successful contribution
-- Fully responsive — works on mobile, tablet, and desktop
 
 ---
 
