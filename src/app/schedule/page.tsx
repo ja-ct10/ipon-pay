@@ -5,7 +5,7 @@ import { PageWrapper } from '@/components/layout/PageWrapper'
 import { ScheduleTable } from '@/components/schedule/ScheduleTable'
 import { useWallet } from '@/contexts/WalletContext'
 import { GROUP_DATA } from '@/lib/mock-data'
-import { fetchPoolMembers, fetchPayoutHistory, fetchXLMBalance } from '@/lib/horizon'
+import { fetchPoolMembers, fetchPayoutHistory, fetchCurrentRoundCollected } from '@/lib/horizon'
 import { deriveSchedule } from '@/lib/utils'
 import type { CycleEntry } from '@/lib/types'
 
@@ -20,10 +20,10 @@ export default function SchedulePage() {
   const syncPool = useCallback(async () => {
     if (!GROUP_DATA.poolAddress) return
     try {
-      const [members, payoutRecipients, poolBalance] = await Promise.all([
+      const [members, payoutRecipients, currentRoundCollected] = await Promise.all([
         fetchPoolMembers(GROUP_DATA.poolAddress),
         fetchPayoutHistory(GROUP_DATA.poolAddress),
-        fetchXLMBalance(GROUP_DATA.poolAddress),
+        fetchCurrentRoundCollected(GROUP_DATA.poolAddress),
       ])
 
       setSchedule(deriveSchedule(members, payoutRecipients))
@@ -31,9 +31,7 @@ export default function SchedulePage() {
       const target = Math.max(members.length, MIN_MEMBERS) * GROUP_DATA.contributionAmount
       setTargetPoolAmount(target)
 
-      // Pool balance from Horizon = actual current XLM held minus the 1 XLM minimum reserve
-      const poolHeld = Math.max(0, parseFloat(poolBalance) - 1)
-      setPoolCollected(Math.min(poolHeld, target))
+      setPoolCollected(Math.min(currentRoundCollected, target))
     } catch { /* non-fatal */ }
   }, [])
 

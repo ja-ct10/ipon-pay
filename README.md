@@ -69,15 +69,11 @@ IponPay is a **decentralized Paluwagan platform** that allows a group of people 
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/ja-ct10/ipon-pay.git
 cd ipon-pay
 
 # Install dependencies
 npm install
-
-# Copy environment variables
-cp .env.local.example .env.local
-# Fill in NEXT_PUBLIC_POOL_ADDRESS and POOL_SECRET_KEY (see Environment Variables section)
 
 # Start development server
 npm run dev

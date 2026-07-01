@@ -176,3 +176,45 @@ export async function fetchPoolMembers(poolAddress: string): Promise<Member[]> {
     paidAt: m.paidAt,
   }))
 }
+
+/**
+ * Calculate how much XLM has been contributed to the pool in the CURRENT round.
+ * 
+ * A "round" ends when the pool makes an outgoing payout.
+ * We walk the payment history chronologically, reset the counter on each payout,
+ * and return the running total of contributions since the last payout.
+ * 
+ * This is independent of the pool's raw XLM balance (which starts high due to
+ * the initial funding transaction).
+ */
+export async function fetchCurrentRoundCollected(poolAddress: string): Promise<number> {
+  if (!poolAddress) return 0
+  try {
+    const server = new StellarSdk.Horizon.Server(horizonUrl)
+    const payments = await server
+      .payments()
+      .forAccount(poolAddress)
+      .order('asc')
+      .limit(200)
+      .call()
+
+    let runningTotal = 0
+
+    for (const record of payments.records) {
+      if (record.type !== 'payment') continue
+      const p = record as StellarSdk.Horizon.ServerApi.PaymentOperationRecord
+      
+      if (p.from === poolAddress) {
+        // Outgoing payout — this marks the end of a round, reset
+        runningTotal = 0
+      } else {
+        // Incoming contribution from a member
+        runningTotal += parseFloat(p.amount)
+      }
+    }
+
+    return runningTotal
+  } catch {
+    return 0
+  }
+}

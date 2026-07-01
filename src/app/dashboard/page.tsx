@@ -9,7 +9,7 @@ import { PoolProgress } from '@/components/dashboard/PoolProgress'
 import { MemberList } from '@/components/dashboard/MemberList'
 import { useWallet } from '@/contexts/WalletContext'
 import { GROUP_DATA } from '@/lib/mock-data'
-import { fetchPoolMembers, fetchPayoutHistory, fetchXLMBalance } from '@/lib/horizon'
+import { fetchPoolMembers, fetchPayoutHistory, fetchCurrentRoundCollected } from '@/lib/horizon'
 import { deriveSchedule } from '@/lib/utils'
 import type { Member, CycleEntry } from '@/lib/types'
 
@@ -26,18 +26,16 @@ export default function DashboardPage() {
   const syncFromChain = useCallback(async () => {
     if (!GROUP_DATA.poolAddress) return
     try {
-      const [liveMembers, payoutRecipients, poolBalance] = await Promise.all([
+      const [liveMembers, payoutRecipients, currentRoundCollected] = await Promise.all([
         fetchPoolMembers(GROUP_DATA.poolAddress),
         fetchPayoutHistory(GROUP_DATA.poolAddress),
-        fetchXLMBalance(GROUP_DATA.poolAddress),
+        fetchCurrentRoundCollected(GROUP_DATA.poolAddress),
       ])
       setMembers(liveMembers)
       setSchedule(deriveSchedule(liveMembers, payoutRecipients))
 
       const target = Math.max(liveMembers.length, MIN_MEMBERS) * GROUP_DATA.contributionAmount
-      // Pool balance from Horizon = actual current XLM held minus the 1 XLM minimum reserve
-      const poolHeld = Math.max(0, parseFloat(poolBalance) - 1)
-      setPoolCollected(Math.min(poolHeld, target))
+      setPoolCollected(Math.min(currentRoundCollected, target))
     } catch {
       // non-fatal — keep last known state
     } finally {
