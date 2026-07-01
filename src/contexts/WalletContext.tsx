@@ -150,6 +150,18 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     }
   }, [state.address])
 
+  // Auto-refresh balance every 30s when connected (Issue 2: real-time wallet balance)
+  useEffect(() => {
+    if (!state.isConnected || !state.address) return
+    const interval = setInterval(async () => {
+      try {
+        const balance = await fetchXLMBalance(state.address!)
+        dispatch({ type: 'SET_BALANCE', balance })
+      } catch { /* silent — do not surface polling errors to the user */ }
+    }, 30_000)
+    return () => clearInterval(interval)
+  }, [state.isConnected, state.address])
+
   return (
     <WalletContext.Provider
       value={{ state, dispatch, connectWallet, disconnectWallet, refreshBalance }}

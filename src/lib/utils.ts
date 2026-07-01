@@ -119,10 +119,14 @@ import type { CycleEntry } from './types';
 /**
  * Derive a CycleEntry schedule from the dynamic member list.
  * Join order determines payout order (first contributor = first to receive).
- * currentCycleIndex is 0-based.
+ * payoutRecipients is the ordered list of addresses that have already received
+ * a payout (from fetchPayoutHistory). Its length determines the current cycle index.
  */
-export function deriveSchedule(members: Member[], currentCycleIndex: number = 0): CycleEntry[] {
+export function deriveSchedule(members: Member[], payoutRecipients: string[] = []): CycleEntry[] {
   if (members.length === 0) return []
+
+  // How many members have already received a payout determines where we are
+  const currentCycleIndex = payoutRecipients.length
 
   return members.map((member, i) => {
     let status: 'completed' | 'current' | 'upcoming'

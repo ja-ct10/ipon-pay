@@ -116,6 +116,32 @@ export async function submitTransaction(signedXDR: string): Promise<string> {
 }
 
 /**
+ * Fetch outgoing payments FROM the pool address (these are payouts to recipients).
+ * Returns the addresses that have already received a payout, in order.
+ */
+export async function fetchPayoutHistory(poolAddress: string): Promise<string[]> {
+  if (!poolAddress) return []
+  try {
+    const server = new StellarSdk.Horizon.Server(horizonUrl)
+    const payments = await server
+      .payments()
+      .forAccount(poolAddress)
+      .order('asc')
+      .limit(50)
+      .call()
+
+    // Outgoing payments: sender === poolAddress
+    return payments.records
+      .filter((r) => r.type === 'payment')
+      .map((r) => r as StellarSdk.Horizon.ServerApi.PaymentOperationRecord)
+      .filter((p) => p.from === poolAddress)
+      .map((p) => p.to)
+  } catch {
+    return []
+  }
+}
+
+/**
  * Derive the dynamic member list from pool transactions.
  * Each unique sender address that sent XLM to the pool is a "member".
  * Members are returned in chronological order (first contributor = m1, etc.).

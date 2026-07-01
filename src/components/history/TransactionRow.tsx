@@ -1,21 +1,29 @@
+'use client'
+
 import { motion } from 'framer-motion'
-import {
-  truncateAddress,
-  formatXLM,
-  formatTimestamp,
-  stellarExpertLink,
-} from '@/lib/utils'
+import { truncateAddress, formatXLM, formatTimestamp } from '@/lib/utils'
 import type { ContributionTx } from '@/lib/types'
 
 interface TransactionRowProps {
   tx: ContributionTx
+  onClick: (tx: ContributionTx) => void
 }
 
-export function TransactionRow({ tx }: TransactionRowProps) {
+export function TransactionRow({ tx, onClick }: TransactionRowProps) {
   return (
     <motion.tr
       whileHover={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
-      className="border-b border-border transition-colors"
+      className="border-b border-border transition-colors cursor-pointer select-none"
+      onClick={() => onClick(tx)}
+      tabIndex={0}
+      role="button"
+      aria-label={`View details for transaction ${truncateAddress(tx.txHash)}`}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick(tx)
+        }
+      }}
     >
       <td className="px-4 py-3 text-sm font-mono">
         {truncateAddress(tx.sender)}
@@ -26,16 +34,8 @@ export function TransactionRow({ tx }: TransactionRowProps) {
       <td className="px-4 py-3 text-sm text-muted-foreground">
         {formatTimestamp(tx.timestamp)}
       </td>
-      <td className="px-4 py-3 text-sm">
-        <a
-          href={stellarExpertLink(tx.txHash)}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`View transaction ${tx.txHash} on Stellar Expert`}
-          className="font-mono text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
-        >
-          {truncateAddress(tx.txHash)}
-        </a>
+      <td className="px-4 py-3 text-sm font-mono text-muted-foreground">
+        {truncateAddress(tx.txHash)}
       </td>
       <td className="px-4 py-3">
         <span
@@ -43,8 +43,8 @@ export function TransactionRow({ tx }: TransactionRowProps) {
           className={[
             'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
             tx.status === 'success'
-              ? 'bg-emerald-500 text-white'
-              : 'bg-red-500 text-white',
+              ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20'
+              : 'bg-red-500/15 text-red-400 border border-red-500/20',
           ].join(' ')}
         >
           {tx.status === 'success' ? 'Success' : 'Failed'}

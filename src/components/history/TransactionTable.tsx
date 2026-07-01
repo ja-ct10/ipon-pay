@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { TransactionRow } from './TransactionRow'
+import { TransactionDetailModal } from './TransactionDetailModal'
 import { fetchTransactionHistory } from '@/lib/horizon'
 import {
   sortTransactions,
@@ -29,6 +30,7 @@ export function TransactionTable({ address }: TransactionTableProps) {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null)
+  const [selectedTx, setSelectedTx] = useState<ContributionTx | null>(null)
 
   const load = useCallback(
     async (silent = false) => {
@@ -175,12 +177,24 @@ export function TransactionTable({ address }: TransactionTableProps) {
             </thead>
             <tbody>
               {displayedTxs.map((tx) => (
-                <TransactionRow key={tx.txHash} tx={tx} />
+                <TransactionRow key={tx.txHash} tx={tx} onClick={(t) => setSelectedTx(t)} />
               ))}
             </tbody>
           </table>
         </div>
       )}
+
+      {!isLoading && displayedTxs.length > 0 && (
+        <p className="text-xs text-muted-foreground text-center">
+          Click any row to view transaction details
+        </p>
+      )}
+
+      <TransactionDetailModal
+        tx={selectedTx}
+        open={selectedTx !== null}
+        onClose={() => setSelectedTx(null)}
+      />
     </div>
   )
 }

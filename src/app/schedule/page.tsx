@@ -5,8 +5,8 @@ import { PageWrapper } from '@/components/layout/PageWrapper'
 import { ScheduleTable } from '@/components/schedule/ScheduleTable'
 import { useWallet } from '@/contexts/WalletContext'
 import { GROUP_DATA } from '@/lib/mock-data'
-import { fetchPoolMembers, fetchTransactionHistory } from '@/lib/horizon'
-import { sortTransactions, deriveSchedule } from '@/lib/utils'
+import { fetchPoolMembers, fetchPayoutHistory, fetchXLMBalance } from '@/lib/horizon'
+import { deriveSchedule } from '@/lib/utils'
 import type { CycleEntry } from '@/lib/types'
 
 const MIN_MEMBERS = 2
@@ -20,15 +20,20 @@ export default function SchedulePage() {
   const syncPool = useCallback(async () => {
     if (!GROUP_DATA.poolAddress) return
     try {
-      const members = await fetchPoolMembers(GROUP_DATA.poolAddress)
-      setSchedule(deriveSchedule(members))
+      const [members, payoutRecipients, poolBalance] = await Promise.all([
+        fetchPoolMembers(GROUP_DATA.poolAddress),
+        fetchPayoutHistory(GROUP_DATA.poolAddress),
+        fetchXLMBalance(GROUP_DATA.poolAddress),
+      ])
+
+      setSchedule(deriveSchedule(members, payoutRecipients))
 
       const target = Math.max(members.length, MIN_MEMBERS) * GROUP_DATA.contributionAmount
       setTargetPoolAmount(target)
 
-      const txs = await fetchTransactionHistory(GROUP_DATA.poolAddress)
-      const total = sortTransactions(txs).reduce((sum, tx) => sum + parseFloat(tx.amount), 0)
-      setPoolCollected(Math.min(total, target))
+      // Pool balance from Horizon = actual current XLM held minus the 1 XLM minimum reserve
+      const poolHeld = Math.max(0, parseFloat(poolBalance) - 1)
+      setPoolCollected(Math.min(poolHeld, target))
     } catch { /* non-fatal */ }
   }, [])
 
