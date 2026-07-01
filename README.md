@@ -1,36 +1,319 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💰 IponPay
 
-## Getting Started
+> **A blockchain-powered Paluwagan savings platform built on the Stellar network**
 
-First, run the development server:
+IponPay brings the centuries-old Filipino rotating savings tradition (Paluwagan) onto the Stellar blockchain. Members contribute a fixed amount of XLM each cycle into a shared pool, and the full pool is paid out to one member at a time — fully transparent, fully on-chain, and verifiable by anyone.
+
+[![Stellar](https://img.shields.io/badge/Stellar-Testnet-blue)](https://stellar.org)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8)](https://tailwindcss.com)
+[![Soroban](https://img.shields.io/badge/Soroban-Smart%20Contract-purple)](https://soroban.stellar.org)
+
+![Dashboard Screenshot](./public/placeholder-dashboard.png)
+
+![Contribute Screenshot](./public/placeholder-contribute.png)
+
+![History Screenshot](./public/placeholder-history.png)
+
+![Schedule Screenshot](./public/placeholder-schedule.png)
+
+---
+
+## 🎯 What is IponPay?
+
+IponPay is a **decentralized Paluwagan platform** that allows a group of people to:
+
+- **Contribute XLM** — Send your fixed 10 XLM contribution to the shared pool each cycle
+- **Track the Pool** — Watch the pool fill up in real time as members contribute
+- **Receive Payouts** — When the pool is full, the designated cycle recipient claims the full amount directly to their wallet
+- **Verify Everything** — Every transaction is recorded on the Stellar blockchain and linked to Stellar Expert
+
+### Key Features
+
+✨ **Self-Registering Members**
+
+- No accounts or sign-ups needed — connect your Freighter wallet and you're in
+- Any wallet that contributes to the pool is automatically added to the member list
+- Member identity shown as truncated address format: `GCWQ...6YU6`
+
+💰 **Live Pool Tracking**
+
+- Pool balance fetched directly from Stellar Horizon in real time
+- Progress bar updates automatically as each member contributes (polls every 15 seconds)
+- Pool balance visible on both Dashboard and Contribute pages with a direct Stellar Expert link
+
+📋 **Dynamic Payout Schedule**
+
+- Schedule is derived automatically from contribution order (first to contribute = first to receive)
+- "Claim Payout" button appears for the current cycle recipient when the pool is full
+- Payouts sent directly from pool to recipient wallet via server-side Stellar transaction
+
+🔒 **Blockchain Verified**
+
+- All contributions submitted to Stellar Testnet via Horizon API
+- Each transaction recorded in a Soroban smart contract (`IponPayContract`)
+- Every tx hash links to Stellar Expert for independent verification
+
+🎨 **Polished UI**
+
+- Dark/light mode with glassmorphism card styling
+- Framer Motion page transitions and confetti celebration on successful contribution
+- Fully responsive — works on mobile, tablet, and desktop
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js 18+** — [Download](https://nodejs.org/)
+- **Freighter Wallet** — [Install extension](https://freighter.app) (Chrome / Edge / Firefox)
+- **Testnet XLM** — Free from [Stellar Laboratory](https://laboratory.stellar.org/#account-creator?network=test)
+- **Rust + Stellar CLI** _(optional, for contract deployment)_ — [stellar.org/developers](https://developers.stellar.org/docs/tools/developer-tools/cli/stellar-cli)
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone <your-repo-url>
+cd ipon-pay
+
+# Install dependencies
+npm install
+
+# Copy environment variables
+cp .env.local.example .env.local
+# Fill in NEXT_PUBLIC_POOL_ADDRESS and POOL_SECRET_KEY (see Environment Variables section)
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Get Testnet XLM
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Install the Freighter wallet extension and create a wallet
+2. Switch Freighter to **Testnet** mode in Settings
+3. Copy your Stellar address
+4. Visit [Stellar Laboratory Friendbot](https://laboratory.stellar.org/#account-creator?network=test)
+5. Paste your address and click **Get test network lumens**
+6. You'll receive 10,000 testnet XLM — enough to test multiple contribution cycles
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 📖 How It Works
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 1. Connect Your Wallet
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Click **Connect Wallet** on the landing page. The app uses Freighter browser extension to:
 
-## Deploy on Vercel
+- Request wallet authorization
+- Retrieve your public key (Stellar G... address)
+- Fetch your XLM balance from Horizon Testnet
+- Set a session cookie for route protection
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 2. View the Dashboard
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Once connected, the Dashboard shows:
+
+- **Your XLM Balance** — real-time balance from Horizon
+- **Pool Balance** — current XLM held in the shared pool (live, with Stellar Expert link)
+- **Group Stats** — group name, member count, contribution amount, current cycle
+- **Pool Progress** — `X / Y XLM collected` progress bar, auto-refreshes every 15s
+- **Members List** — all wallets that have contributed, with "You" badge on your row
+
+### 3. Contribute to the Pool
+
+Navigate to **Contribute**:
+
+1. Your wallet address is shown as the sender
+2. The pool address (`GBQF...QDEH`) is the fixed destination — no manual entry needed
+3. Click **Send 10 XLM to Pool** → a confirmation modal shows amount, destination, and estimated fee
+4. Approve in Freighter → transaction is submitted to Stellar Testnet
+5. On success: confetti animation + toast with Stellar Expert link
+6. Your wallet automatically appears in the Members list on the Dashboard
+
+### 4. Verify Pool Received Funds
+
+On the Contribute page, click the **↗ icon** next to the pool address. This opens Stellar Expert where you can see all incoming transactions to the pool address — proof that the XLM arrived.
+
+### 5. Claim the Payout
+
+Navigate to **Schedule**:
+
+- The schedule shows the payout order (derived from contribution order)
+- The current cycle recipient is highlighted with a pulsing indicator
+- When the pool is full, the **"Claim Payout"** button appears — but only for the wallet matching the current recipient address
+- Click it → the pool sends the full amount directly to your Freighter wallet via a server-signed Stellar transaction
+
+---
+
+## 🏗️ Architecture
+
+```
+Browser (Next.js 16 App Router)
+├── Freighter Extension  →  wallet auth + transaction signing
+├── Stellar Horizon API  →  balances, payment history, tx submission
+└── Soroban Smart Contract  →  on-chain contribution record (fire-and-forget)
+```
+
+**Key design decisions:**
+
+- **No backend database** — all state derived from Stellar Horizon in real time
+- **Self-registering members** — any wallet that pays into the pool is a member; no admin needed
+- **Pool secret server-side only** — `POOL_SECRET_KEY` never exposed to the browser; payouts happen via `/api/payout` Next.js route
+
+---
+
+## 📁 Project Structure
+
+```
+ipon-pay/
+├── src/
+│   ├── app/
+│   │   ├── page.tsx                  # Landing page
+│   │   ├── dashboard/page.tsx        # Dashboard (protected)
+│   │   ├── contribute/page.tsx       # Contribution form (protected)
+│   │   ├── history/page.tsx          # Pool transaction history (protected)
+│   │   ├── schedule/page.tsx         # Payout schedule + Claim Payout (protected)
+│   │   └── api/payout/route.ts       # Server-side payout API (signs with POOL_SECRET_KEY)
+│   ├── components/
+│   │   ├── dashboard/                # BalanceCard, PoolBalanceCard, GroupStats, PoolProgress, MemberList
+│   │   ├── contribute/               # ContributionForm, ConfirmModal, SuccessConfetti
+│   │   ├── history/                  # TransactionTable, TransactionRow
+│   │   ├── schedule/                 # ScheduleTable, CycleRow, CompletionBanner
+│   │   ├── wallet/                   # ConnectButton, ConnectWalletPrompt
+│   │   └── layout/                   # Navbar, PageWrapper, Providers
+│   ├── contexts/
+│   │   └── WalletContext.tsx         # Global wallet state (useReducer)
+│   └── lib/
+│       ├── horizon.ts                # Horizon API: balances, history, submit, fetchPoolMembers
+│       ├── soroban-client.ts         # Soroban RPC: recordContribution (fire-and-forget)
+│       ├── stellar-helper.ts         # buildPaymentTransaction
+│       ├── wallet.ts                 # Freighter API wrappers
+│       ├── mock-data.ts              # Static group metadata (pool address from env)
+│       ├── types.ts                  # TypeScript interfaces
+│       └── utils.ts                  # Pure helpers + deriveSchedule
+├── contracts/
+│   └── ipon-pay-contract/            # Soroban Rust smart contract
+│       └── src/lib.rs                # record_contribution, get_contributions
+├── proxy.ts                          # Next.js 16 route guard (wallet_connected cookie)
+└── .env.local                        # Environment variables
+```
+
+---
+
+## ⚙️ Environment Variables
+
+Create `.env.local` in the project root:
+
+```env
+# Stellar network
+NEXT_PUBLIC_STELLAR_NETWORK=TESTNET
+NEXT_PUBLIC_HORIZON_URL=https://horizon-testnet.stellar.org
+NEXT_PUBLIC_SOROBAN_RPC_URL=https://soroban-testnet.stellar.org
+
+# Pool address — the shared Stellar account that receives all contributions
+# Generate with: stellar keys generate pool-account --network testnet
+#                stellar keys fund pool-account --network testnet
+NEXT_PUBLIC_POOL_ADDRESS=<your-pool-public-key>
+
+# Soroban contract ID (optional — for on-chain contribution recording)
+NEXT_PUBLIC_SOROBAN_CONTRACT_ID=<your-contract-id>
+
+# Pool secret key — SERVER SIDE ONLY, never prefix with NEXT_PUBLIC_
+# Used to sign payout transactions from the pool
+# Get with: stellar keys show pool-account
+POOL_SECRET_KEY=<your-pool-secret-key>
+```
+
+> ⚠️ **Never commit `POOL_SECRET_KEY` to version control.** Add `.env.local` to `.gitignore`.
+
+### Vercel Deployment
+
+Add the same variables in **Vercel → Project → Settings → Environment Variables**. No member wallet addresses needed — the app is fully self-registering.
+
+---
+
+## 🔗 Smart Contract
+
+The Soroban smart contract (`contracts/ipon-pay-contract/`) records each contribution on-chain:
+
+```rust
+// ContributionRecord: sender address, amount in stroops, Unix timestamp
+record_contribution(env, sender, amount_stroops, timestamp)
+get_contributions(env) -> Vec<ContributionRecord>
+```
+
+**Build and deploy:**
+
+```bash
+# Build WASM
+stellar contract build
+
+# Deploy to testnet
+stellar contract deploy \
+  --wasm target/wasm32-unknown-unknown/release/ipon_pay_contract.wasm \
+  --network testnet \
+  --source <your-keypair>
+```
+
+The Soroban call is **fire-and-forget** — a failed RPC call does not affect the Horizon payment settlement.
+
+---
+
+## 🧪 Running Tests
+
+```bash
+# Run all property-based tests (fast-check)
+npm test
+
+# Type check
+npx tsc --noEmit --skipLibCheck
+
+# Build
+npm run build
+```
+
+Tests cover utility functions with property-based testing using `fast-check`:
+
+- Address truncation consistency
+- XLM balance formatting
+- Pool progress calculation
+- Transaction sort order and filter correctness
+- Insufficient funds guard
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer          | Technology                              |
+| -------------- | --------------------------------------- |
+| Framework      | Next.js 16 (App Router)                 |
+| Language       | TypeScript 5                            |
+| Styling        | Tailwind CSS v4 + shadcn/ui             |
+| Animations     | Framer Motion                           |
+| Blockchain     | Stellar Testnet                         |
+| Wallet         | Freighter (`@stellar/freighter-api` v6) |
+| Horizon Client | `@stellar/stellar-sdk` v16              |
+| Smart Contract | Soroban (Rust)                          |
+| Testing        | Vitest + fast-check (property-based)    |
+| Deployment     | Vercel                                  |
+
+---
+
+## 🤝 Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines on submitting pull requests and reporting issues.
+
+---
+
+## 📄 License
+
+MIT — see [LICENSE](./LICENSE) for details.
+
+---
+
+<p align="center">Built with ❤️ on the Stellar network · <a href="https://stellar.expert/explorer/testnet/account/GBQFOMWQPFJ5FTYXOASSVQOQ2W4XD7MXYGRFDZB7E52VXOW2ZQIGDQEH">View Pool on Stellar Expert</a></p>

@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "contracts/ipon-pay-contract",
+]
+resolver = "2"

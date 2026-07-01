@@ -1,0 +1,31 @@
+import { cn } from '@/lib/utils'
+import { Skeleton } from '@/components/ui/skeleton'
+
+interface SkeletonCardProps {
+  className?: string
+  lines?: number
+}
+
+export function SkeletonCard({ className, lines = 3 }: SkeletonCardProps) {
+  return (
+    <div
+      className={cn(
+        'animate-pulse bg-white/5 dark:bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl p-4',
+        className,
+      )}
+    >
+      {/* Header skeleton */}
+      <Skeleton className="h-5 w-1/3 mb-4" />
+
+      {/* Text line skeletons */}
+      <div className="flex flex-col gap-2">
+        {Array.from({ length: lines }, (_, i) => (
+          <Skeleton
+            key={i}
+            className={cn('h-4', i === lines - 1 ? 'w-3/4' : 'w-full')}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
