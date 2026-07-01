@@ -65,7 +65,7 @@ export function TransactionDetailModal({ tx, open, onClose }: TransactionDetailM
 
         <div className="space-y-4 py-1 text-sm">
 
-          {/* Amount + Status */}
+          {/* Amount + Status + Type */}
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Amount</p>
@@ -74,16 +74,30 @@ export function TransactionDetailModal({ tx, open, onClose }: TransactionDetailM
                 <span className="text-lg font-normal text-muted-foreground">XLM</span>
               </p>
             </div>
-            <div className="text-right">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Status</p>
-              <div className="mt-1.5">
-                <Badge className={
-                  tx.status === 'success'
-                    ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20'
-                    : 'bg-red-500/15 text-red-400 border border-red-500/20'
-                }>
-                  {tx.status === 'success' ? 'Success' : 'Failed'}
-                </Badge>
+            <div className="text-right space-y-2">
+              <div>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">Type</p>
+                <div className="mt-1">
+                  <Badge className={
+                    tx.type === 'payout'
+                      ? 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/20'
+                      : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20'
+                  }>
+                    {tx.type === 'payout' ? 'Payout' : 'Contribution'}
+                  </Badge>
+                </div>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">Status</p>
+                <div className="mt-1">
+                  <Badge className={
+                    tx.status === 'success'
+                      ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20'
+                      : 'bg-red-500/15 text-red-400 border border-red-500/20'
+                  }>
+                    {tx.status === 'success' ? 'Success' : 'Failed'}
+                  </Badge>
+                </div>
               </div>
             </div>
           </div>
@@ -97,7 +111,9 @@ export function TransactionDetailModal({ tx, open, onClose }: TransactionDetailM
           {/* Sender address */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Sender Address</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">
+                {tx.type === 'payout' ? 'From (Pool)' : 'Sender Address'}
+              </p>
               <a
                 href={senderLink}
                 target="_blank"
@@ -114,6 +130,29 @@ export function TransactionDetailModal({ tx, open, onClose }: TransactionDetailM
               <CopyButton value={tx.sender} />
             </div>
           </div>
+
+          {/* Recipient address (shown for payouts) */}
+          {tx.type === 'payout' && tx.recipient && (
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">Recipient Address</p>
+                <a
+                  href={`https://stellar.expert/explorer/testnet/account/${tx.recipient}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                >
+                  View wallet ↗
+                </a>
+              </div>
+              <div className="flex items-center gap-2">
+                <code className="flex-1 text-xs font-mono break-all rounded-lg bg-muted px-3 py-2 text-muted-foreground">
+                  {tx.recipient}
+                </code>
+                <CopyButton value={tx.recipient} />
+              </div>
+            </div>
+          )}
 
           {/* Transaction hash */}
           <div>

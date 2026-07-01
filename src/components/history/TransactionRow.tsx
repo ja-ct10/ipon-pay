@@ -10,6 +10,8 @@ interface TransactionRowProps {
 }
 
 export function TransactionRow({ tx, onClick }: TransactionRowProps) {
+  const isPayout = tx.type === 'payout'
+
   return (
     <motion.tr
       whileHover={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
@@ -25,8 +27,22 @@ export function TransactionRow({ tx, onClick }: TransactionRowProps) {
         }
       }}
     >
+      <td className="px-4 py-3 text-sm">
+        <span
+          className={[
+            'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
+            isPayout
+              ? 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/20'
+              : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20',
+          ].join(' ')}
+        >
+          {isPayout ? 'Payout' : 'Contribution'}
+        </span>
+      </td>
       <td className="px-4 py-3 text-sm font-mono">
-        {truncateAddress(tx.sender)}
+        {isPayout
+          ? `→ ${truncateAddress(tx.recipient ?? '')}`
+          : truncateAddress(tx.sender)}
       </td>
       <td className="px-4 py-3 text-sm tabular-nums">
         {formatXLM(tx.amount)} XLM

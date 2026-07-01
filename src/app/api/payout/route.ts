@@ -139,19 +139,31 @@ export async function POST(request: Request) {
     const result = await server.submitTransaction(tx)
 
     // Fire-and-forget: record the payout on-chain via Soroban contract.
-    // Small delay lets the Soroban RPC sync the pool account's updated sequence number
-    // after the Horizon payout transaction consumed it.
+    // Count existing payouts from this pool to determine cycle number
+    let payoutCount = 0
+    for (const record of paymentsForMembers.records) {
+      if (record.type !== 'payment') continue
+      const p = record as StellarSdk.Horizon.ServerApi.PaymentOperationRecord
+      if (p.from === poolAddress) {
+        payoutCount++
+      }
+    }
+    const currentCycleNumber = payoutCount + 1
+
+    // Record payout on-chain via Soroban (fire-and-forget — errors logged, not thrown)
     if (poolSecret) {
-      setTimeout(() => {
-        void recordPayout({
+      try {
+        await recordPayout({
           poolAddress,
           poolSecret,
           recipient: recipientAddress,
           amountStroops: BigInt(Math.round(serverAmount * 10_000_000)),
-          cycleNumber: 1,
+          cycleNumber: currentCycleNumber,
           timestamp: BigInt(Math.floor(Date.now() / 1000)),
         })
-      }, 5000) // wait 5s for Soroban RPC to catch up
+      } catch (err) {
+        console.error('[payout] Soroban record_payout failed (non-fatal):', err)
+      }
     }
 
     return Response.json({ txHash: result.hash })

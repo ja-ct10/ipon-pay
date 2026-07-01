@@ -34,9 +34,11 @@ const arbTx = (): fc.Arbitrary<ContributionTx> =>
   fc.record({
     txHash: fc.string({ minLength: 8, maxLength: 64 }),
     sender: fc.string({ minLength: 1, maxLength: 60 }),
+    recipient: fc.option(fc.string({ minLength: 1, maxLength: 60 }), { nil: undefined }),
     amount: fc.float({ min: 0, max: 10_000, noNaN: true }).map(String),
     timestamp: arbISOTimestamp(),
     status: fc.constantFrom('success' as const, 'failed' as const),
+    type: fc.constantFrom('contribution' as const, 'payout' as const),
   })
 
 /** Arbitrary for a Member */
@@ -424,7 +426,7 @@ describe('Property 8: Transaction sort order', () => {
 describe('Property 9: Transaction filter correctness', () => {
   // Feature: ipon-pay, Property 9: Transaction filter correctness
 
-  it('every filterTransactions result matches sender or txHash (case-insensitive)', () => {
+  it('every filterTransactions result matches sender, txHash, or recipient (case-insensitive)', () => {
     fc.assert(
       fc.property(
         fc.array(arbTx()),
@@ -435,7 +437,8 @@ describe('Property 9: Transaction filter correctness', () => {
           result.forEach((tx) => {
             const matchesSender = tx.sender.toLowerCase().includes(q)
             const matchesHash = tx.txHash.toLowerCase().includes(q)
-            expect(matchesSender || matchesHash).toBe(true)
+            const matchesRecipient = tx.recipient ? tx.recipient.toLowerCase().includes(q) : false
+            expect(matchesSender || matchesHash || matchesRecipient).toBe(true)
           })
         },
       ),

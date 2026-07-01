@@ -17,9 +17,11 @@ export interface Member {
 export interface ContributionTx {
   txHash: string;
   sender: string;
+  recipient?: string;
   amount: string;
   timestamp: string;
   status: 'success' | 'failed';
+  type: 'contribution' | 'payout';
 }
 
 export interface CycleEntry {

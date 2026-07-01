@@ -48,12 +48,15 @@ export async function fetchTransactionHistory(
       .filter((r) => r.type === 'payment')
       .map((r) => {
         const p = r as StellarSdk.Horizon.ServerApi.PaymentOperationRecord
+        const isPayout = p.from === address
         return {
           txHash: p.transaction_hash,
           sender: p.from ?? '',
+          recipient: p.to ?? '',
           amount: p.amount,
           timestamp: p.created_at,
           status: 'success' as const,
+          type: isPayout ? 'payout' as const : 'contribution' as const,
         }
       })
   } catch (err: unknown) {

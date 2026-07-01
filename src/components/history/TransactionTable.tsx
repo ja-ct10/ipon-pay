@@ -11,10 +11,12 @@ import {
   sortTransactions,
   filterTransactions,
   filterByStatus,
+  filterByType,
 } from '@/lib/utils'
 import type { ContributionTx } from '@/lib/types'
 
 type StatusFilter = 'all' | 'success' | 'failed'
+type TypeFilter = 'all' | 'contribution' | 'payout'
 
 interface TransactionTableProps {
   address: string
@@ -29,6 +31,7 @@ export function TransactionTable({ address }: TransactionTableProps) {
   const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null)
   const [selectedTx, setSelectedTx] = useState<ContributionTx | null>(null)
 
@@ -58,7 +61,7 @@ export function TransactionTable({ address }: TransactionTableProps) {
     load()
   }, [load])
 
-  // Auto-poll every 15s so receiver sees new contributions without manual refresh
+  // Auto-poll every 10s so receiver sees new contributions without manual refresh
   useEffect(() => {
     const interval = setInterval(() => {
       load(true) // silent — no spinner on background refresh
@@ -67,14 +70,20 @@ export function TransactionTable({ address }: TransactionTableProps) {
   }, [load])
 
   const displayedTxs = filterTransactions(
-    filterByStatus(txs, statusFilter),
+    filterByType(filterByStatus(txs, statusFilter), typeFilter),
     search,
   )
 
-  const filterButtons: { label: string; value: StatusFilter }[] = [
+  const statusButtons: { label: string; value: StatusFilter }[] = [
     { label: 'All', value: 'all' },
     { label: 'Success', value: 'success' },
     { label: 'Failed', value: 'failed' },
+  ]
+
+  const typeButtons: { label: string; value: TypeFilter }[] = [
+    { label: 'All Types', value: 'all' },
+    { label: 'Contributions', value: 'contribution' },
+    { label: 'Payouts', value: 'payout' },
   ]
 
   return (
@@ -94,7 +103,7 @@ export function TransactionTable({ address }: TransactionTableProps) {
             role="group"
             aria-label="Filter transactions by status"
           >
-            {filterButtons.map(({ label, value }) => (
+            {statusButtons.map(({ label, value }) => (
               <Button
                 key={value}
                 variant={statusFilter === value ? 'default' : 'ghost'}
@@ -117,6 +126,26 @@ export function TransactionTable({ address }: TransactionTableProps) {
             Refresh
           </Button>
         </div>
+      </div>
+
+      {/* Type filter row */}
+      <div
+        className="flex items-center gap-1"
+        role="group"
+        aria-label="Filter transactions by type"
+      >
+        {typeButtons.map(({ label, value }) => (
+          <Button
+            key={value}
+            variant={typeFilter === value ? 'default' : 'ghost'}
+            size="sm"
+            aria-label={`Show ${label.toLowerCase()}`}
+            aria-pressed={typeFilter === value}
+            onClick={() => setTypeFilter(value)}
+          >
+            {label}
+          </Button>
+        ))}
       </div>
 
       {/* Last refreshed indicator */}
@@ -159,7 +188,10 @@ export function TransactionTable({ address }: TransactionTableProps) {
             <thead>
               <tr className="border-b border-border bg-white/3">
                 <th scope="col" className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  Sender
+                  Type
+                </th>
+                <th scope="col" className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  From / To
                 </th>
                 <th scope="col" className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   Amount

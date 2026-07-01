@@ -92,7 +92,8 @@ export function filterTransactions(
   return txs.filter(
     (tx) =>
       tx.sender.toLowerCase().includes(q) ||
-      tx.txHash.toLowerCase().includes(q),
+      tx.txHash.toLowerCase().includes(q) ||
+      (tx.recipient && tx.recipient.toLowerCase().includes(q)),
   );
 }
 
@@ -103,6 +104,15 @@ export function filterByStatus(
 ): ContributionTx[] {
   if (status === 'all') return txs;
   return txs.filter((tx) => tx.status === status);
+}
+
+// Requirement 6.6 — filter transactions by type (contribution vs payout)
+export function filterByType(
+  txs: ContributionTx[],
+  type: 'all' | 'contribution' | 'payout',
+): ContributionTx[] {
+  if (type === 'all') return txs;
+  return txs.filter((tx) => tx.type === type);
 }
 
 // Stellar Expert link helper
