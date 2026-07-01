@@ -35,7 +35,6 @@ IponPay is a **decentralized Paluwagan platform** that allows a group of people 
 
 - No accounts or sign-ups needed — connect your Freighter wallet and you're in
 - Any wallet that contributes to the pool is automatically added to the member list
-- Member identity shown as truncated address format: `GCWQ...6YU6`
 
 💰 **Live Pool Tracking**
 
@@ -54,12 +53,6 @@ IponPay is a **decentralized Paluwagan platform** that allows a group of people 
 - All contributions submitted to Stellar Testnet via Horizon API
 - Each transaction recorded in a Soroban smart contract (`IponPayContract`)
 - Every tx hash links to Stellar Expert for independent verification
-
-🎨 **Polished UI**
-
-- Dark/light mode with glassmorphism card styling
-- Framer Motion page transitions and confetti celebration on successful contribution
-- Fully responsive — works on mobile, tablet, and desktop
 
 ---
 
@@ -202,38 +195,6 @@ ipon-pay/
 ├── proxy.ts                          # Next.js 16 route guard (wallet_connected cookie)
 └── .env.local                        # Environment variables
 ```
-
----
-
-## ⚙️ Environment Variables
-
-Create `.env.local` in the project root:
-
-```env
-# Stellar network
-NEXT_PUBLIC_STELLAR_NETWORK=TESTNET
-NEXT_PUBLIC_HORIZON_URL=https://horizon-testnet.stellar.org
-NEXT_PUBLIC_SOROBAN_RPC_URL=https://soroban-testnet.stellar.org
-
-# Pool address — the shared Stellar account that receives all contributions
-# Generate with: stellar keys generate pool-account --network testnet
-#                stellar keys fund pool-account --network testnet
-NEXT_PUBLIC_POOL_ADDRESS=<your-pool-public-key>
-
-# Soroban contract ID (optional — for on-chain contribution recording)
-NEXT_PUBLIC_SOROBAN_CONTRACT_ID=<your-contract-id>
-
-# Pool secret key — SERVER SIDE ONLY, never prefix with NEXT_PUBLIC_
-# Used to sign payout transactions from the pool
-# Get with: stellar keys show pool-account
-POOL_SECRET_KEY=<your-pool-secret-key>
-```
-
-> ⚠️ **Never commit `POOL_SECRET_KEY` to version control.** Add `.env.local` to `.gitignore`.
-
-### Vercel Deployment
-
-Add the same variables in **Vercel → Project → Settings → Environment Variables**. No member wallet addresses needed — the app is fully self-registering.
 
 ---
 
