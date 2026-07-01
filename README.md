@@ -181,7 +181,7 @@ ipon-pay/
 │   │   └── WalletContext.tsx         # Global wallet state (useReducer)
 │   └── lib/
 │       ├── horizon.ts                # Horizon API: balances, history, submit, fetchPoolMembers
-│       ├── soroban-client.ts         # Soroban RPC: recordContribution (fire-and-forget)
+│       ├── soroban-client.ts         # Soroban RPC: recordContribution, recordPayout (fire-and-forget)
 │       ├── stellar-helper.ts         # buildPaymentTransaction
 │       ├── wallet.ts                 # Freighter API wrappers
 │       ├── mock-data.ts              # Static group metadata (pool address from env)
@@ -189,7 +189,7 @@ ipon-pay/
 │       └── utils.ts                  # Pure helpers + deriveSchedule
 ├── contracts/
 │   └── ipon-pay-contract/            # Soroban Rust smart contract
-│       └── src/lib.rs                # record_contribution, get_contributions
+│       └── src/lib.rs                # record_contribution, record_payout, get_contributions, get_payouts
 ├── proxy.ts                          # Next.js 16 route guard (wallet_connected cookie)
 └── .env.local                        # Environment variables (not committed — see .gitignore)
 ```
@@ -198,33 +198,39 @@ ipon-pay/
 
 ## 🔗 Smart Contract
 
-The Soroban smart contract (`contracts/ipon-pay-contract/`) records each contribution on-chain:
+The Soroban smart contract (`contracts/ipon-pay-contract/`) records contributions and payouts on-chain:
 
 ```rust
 // ContributionRecord: sender address, amount in stroops, Unix timestamp
 record_contribution(env, sender, amount_stroops, timestamp)
 get_contributions(env) -> Vec<ContributionRecord>
+
+// PayoutRecord: recipient address, amount in stroops, cycle number, Unix timestamp
+// Called by the pool account (server-side) after each successful Horizon payout
+record_payout(env, caller, recipient, amount_stroops, cycle_number, timestamp)
+get_payouts(env) -> Vec<PayoutRecord>
 ```
 
 **Build and deploy:**
 
 ```bash
-# Build WASM
-stellar contract build
+# Build WASM (use cargo directly — stellar CLI 27 wasm32v1-none requires VS Build Tools on Windows)
+cargo build --target wasm32-unknown-unknown --release \
+  --manifest-path contracts/ipon-pay-contract/Cargo.toml
 
 # Deploy to testnet
 stellar contract deploy \
   --wasm target/wasm32-unknown-unknown/release/ipon_pay_contract.wasm \
   --network testnet \
-  --source <your-keypair>
+  --source pool-account
 ```
 
-The Soroban call is **fire-and-forget** — a failed RPC call does not affect the Horizon payment settlement.
+Both Soroban calls are **fire-and-forget** — a failed RPC call does not affect the Horizon payment settlement.
 
 **Deployed Contract (Testnet):**
 
-- Contract ID: `CAGLGQA5E757DS4GU4JD5PRXS5GAOBRK3TTLXIXF7NA2BT7F3ME4DF5U`
-- [View Contract on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CAGLGQA5E757DS4GU4JD5PRXS5GAOBRK3TTLXIXF7NA2BT7F3ME4DF5U)
+- Contract ID: `CDB7SE7O5VMN7DQSKCHYG6TVXTDJWULYKXZTSZQVO4DGRGYRFIQSJ44P`
+- [View Contract on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDB7SE7O5VMN7DQSKCHYG6TVXTDJWULYKXZTSZQVO4DGRGYRFIQSJ44P)
 
 ---
 

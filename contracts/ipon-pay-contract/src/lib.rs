@@ -12,8 +12,18 @@ pub struct ContributionRecord {
     pub timestamp: u64,
 }
 
+/// A single payout record stored on-chain.
+#[contracttype]
+#[derive(Clone)]
+pub struct PayoutRecord {
+    pub recipient: Address,
+    pub amount_stroops: i128,
+    pub cycle_number: u32,
+    pub timestamp: u64,
+}
+
 /// The IponPay smart contract.
-/// Stores a list of contribution records in instance storage and emits events.
+/// Stores contribution and payout records in instance storage and emits events.
 #[contract]
 pub struct IponPayContract;
 
@@ -29,7 +39,7 @@ impl IponPayContract {
     ) {
         sender.require_auth();
 
-        let key = symbol_short!("records");
+        let key = symbol_short!("contribs");
 
         let mut records: Vec<ContributionRecord> = env
             .storage()
@@ -45,10 +55,47 @@ impl IponPayContract {
 
         env.storage().instance().set(&key, &records);
 
-        // Emit an event so indexers can track contributions
+        // Emit event so Stellar Expert can index it
         env.events().publish(
             (symbol_short!("contrib"), sender),
             (amount_stroops, timestamp),
+        );
+    }
+
+    /// Record a payout on-chain.
+    /// Called by the pool account after sending XLM to a recipient.
+    /// The pool account (caller) must authorize this call.
+    pub fn record_payout(
+        env: Env,
+        caller: Address,
+        recipient: Address,
+        amount_stroops: i128,
+        cycle_number: u32,
+        timestamp: u64,
+    ) {
+        caller.require_auth();
+
+        let key = symbol_short!("payouts");
+
+        let mut records: Vec<PayoutRecord> = env
+            .storage()
+            .instance()
+            .get(&key)
+            .unwrap_or(Vec::new(&env));
+
+        records.push_back(PayoutRecord {
+            recipient: recipient.clone(),
+            amount_stroops,
+            cycle_number,
+            timestamp,
+        });
+
+        env.storage().instance().set(&key, &records);
+
+        // Emit event visible on Stellar Expert
+        env.events().publish(
+            (symbol_short!("payout"), recipient),
+            (amount_stroops, cycle_number, timestamp),
         );
     }
 
@@ -56,7 +103,15 @@ impl IponPayContract {
     pub fn get_contributions(env: Env) -> Vec<ContributionRecord> {
         env.storage()
             .instance()
-            .get(&symbol_short!("records"))
+            .get(&symbol_short!("contribs"))
+            .unwrap_or(Vec::new(&env))
+    }
+
+    /// Retrieve all stored payout records.
+    pub fn get_payouts(env: Env) -> Vec<PayoutRecord> {
+        env.storage()
+            .instance()
+            .get(&symbol_short!("payouts"))
             .unwrap_or(Vec::new(&env))
     }
 }
@@ -67,7 +122,7 @@ mod test {
     use soroban_sdk::{testutils::Address as _, Env};
 
     #[test]
-    fn test_record_and_retrieve() {
+    fn test_record_and_retrieve_contribution() {
         let env = Env::default();
         env.mock_all_auths();
 
@@ -75,32 +130,28 @@ mod test {
         let client = IponPayContractClient::new(&env, &contract_id);
 
         let sender = Address::generate(&env);
-        let amount: i128 = 100_000_000; // 10 XLM in stroops
-        let timestamp: u64 = 1_700_000_000;
-
-        client.record_contribution(&sender, &amount, &timestamp);
+        client.record_contribution(&sender, &100_000_000_i128, &1_700_000_000_u64);
 
         let records = client.get_contributions();
         assert_eq!(records.len(), 1);
-        assert_eq!(records.get(0).unwrap().amount_stroops, amount);
-        assert_eq!(records.get(0).unwrap().timestamp, timestamp);
+        assert_eq!(records.get(0).unwrap().amount_stroops, 100_000_000);
     }
 
     #[test]
-    fn test_multiple_contributions() {
+    fn test_record_and_retrieve_payout() {
         let env = Env::default();
         env.mock_all_auths();
 
         let contract_id = env.register(IponPayContract, ());
         let client = IponPayContractClient::new(&env, &contract_id);
 
-        let sender1 = Address::generate(&env);
-        let sender2 = Address::generate(&env);
+        let pool = Address::generate(&env);
+        let recipient = Address::generate(&env);
+        client.record_payout(&pool, &recipient, &200_000_000_i128, &1_u32, &1_700_000_100_u64);
 
-        client.record_contribution(&sender1, &100_000_000_i128, &1_700_000_001_u64);
-        client.record_contribution(&sender2, &100_000_000_i128, &1_700_000_002_u64);
-
-        let records = client.get_contributions();
-        assert_eq!(records.len(), 2);
+        let payouts = client.get_payouts();
+        assert_eq!(payouts.len(), 1);
+        assert_eq!(payouts.get(0).unwrap().cycle_number, 1);
+        assert_eq!(payouts.get(0).unwrap().amount_stroops, 200_000_000);
     }
 }

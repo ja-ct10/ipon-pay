@@ -60,3 +60,71 @@ export async function recordContribution(
     )
   }
 }
+
+/**
+ * Record a payout on-chain via the IponPay Soroban contract.
+ * Fire-and-forget — errors are caught and logged, never re-thrown.
+ * Called by the payout API route after a successful Horizon payment.
+ *
+ * @param poolAddress   - The pool Stellar address (acts as caller/authorizer)
+ * @param poolSecret    - The pool secret key (server-side only)
+ * @param recipient     - The recipient's Stellar address
+ * @param amountStroops - Payout amount in stroops (bigint)
+ * @param cycleNumber   - Which cycle number this payout is for
+ * @param timestamp     - Unix timestamp (bigint)
+ */
+export async function recordPayout(params: {
+  poolAddress: string
+  poolSecret: string
+  recipient: string
+  amountStroops: bigint
+  cycleNumber: number
+  timestamp: bigint
+}): Promise<void> {
+  const { poolAddress, poolSecret, recipient, amountStroops, cycleNumber, timestamp } = params
+  if (!contractId) {
+    console.warn('[soroban-client] NEXT_PUBLIC_SOROBAN_CONTRACT_ID not set — skipping payout record')
+    return
+  }
+  try {
+    const rpcServer = new StellarSdk.rpc.Server(rpcUrl, { allowHttp: false })
+    const contract = new StellarSdk.Contract(contractId)
+
+    const account = await rpcServer.getAccount(poolAddress)
+
+    const tx = new StellarSdk.TransactionBuilder(
+      account as unknown as StellarSdk.Account,
+      {
+        fee: StellarSdk.BASE_FEE,
+        networkPassphrase: StellarSdk.Networks.TESTNET,
+      },
+    )
+      .addOperation(
+        contract.call(
+          'record_payout',
+          StellarSdk.Address.fromString(poolAddress).toScVal(),
+          StellarSdk.Address.fromString(recipient).toScVal(),
+          StellarSdk.nativeToScVal(amountStroops, { type: 'i128' }),
+          StellarSdk.nativeToScVal(cycleNumber, { type: 'u32' }),
+          StellarSdk.nativeToScVal(timestamp, { type: 'u64' }),
+        ),
+      )
+      .setTimeout(30)
+      .build()
+
+    const simResult = await rpcServer.simulateTransaction(tx)
+    if (!StellarSdk.rpc.Api.isSimulationSuccess(simResult)) {
+      throw new Error(`Simulation failed: ${JSON.stringify(simResult)}`)
+    }
+
+    const assembled = StellarSdk.rpc.assembleTransaction(tx, simResult).build()
+
+    // Sign with the pool keypair (server-side — secret never leaves the server)
+    const keypair = StellarSdk.Keypair.fromSecret(poolSecret)
+    assembled.sign(keypair)
+
+    await rpcServer.sendTransaction(assembled as StellarSdk.Transaction)
+  } catch (err) {
+    console.error('[soroban-client] recordPayout failed (fire-and-forget):', err)
+  }
+}
