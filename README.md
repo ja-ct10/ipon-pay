@@ -198,38 +198,6 @@ ipon-pay/
 
 ---
 
-## ⚙️ Environment Variables
-
-Create `.env.local` in the project root:
-
-```env
-# Stellar network
-NEXT_PUBLIC_STELLAR_NETWORK=TESTNET
-NEXT_PUBLIC_HORIZON_URL=https://horizon-testnet.stellar.org
-NEXT_PUBLIC_SOROBAN_RPC_URL=https://soroban-testnet.stellar.org
-
-# Pool address — the shared Stellar account that receives all contributions
-# Generate with: stellar keys generate pool-account --network testnet
-#                stellar keys fund pool-account --network testnet
-NEXT_PUBLIC_POOL_ADDRESS=<your-pool-public-key>
-
-# Soroban contract ID (optional — for on-chain contribution recording)
-NEXT_PUBLIC_SOROBAN_CONTRACT_ID=<your-contract-id>
-
-# Pool secret key — SERVER SIDE ONLY, never prefix with NEXT_PUBLIC_
-# Used to sign payout transactions from the pool
-# Get with: stellar keys show pool-account
-POOL_SECRET_KEY=<your-pool-secret-key>
-```
-
-> ⚠️ **Never commit `POOL_SECRET_KEY` to version control.** Add `.env.local` to `.gitignore`.
-
-### Vercel Deployment
-
-Add the same variables in **Vercel → Project → Settings → Environment Variables**. No member wallet addresses needed — the app is fully self-registering.
-
----
-
 ## 🔗 Smart Contract
 
 The Soroban smart contract (`contracts/ipon-pay-contract/`) records each contribution on-chain:
