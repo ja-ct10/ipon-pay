@@ -10,13 +10,15 @@ IponPay brings the centuries-old Filipino rotating savings tradition (Paluwagan)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8)](https://tailwindcss.com)
 [![Soroban](https://img.shields.io/badge/Soroban-Smart%20Contract-purple)](https://soroban.stellar.org)
 
-![Dashboard Screenshot](./public/placeholder-dashboard.png)
+> 📸 **Screenshots** — Replace the placeholder images below with actual screenshots after deployment.
 
-![Contribute Screenshot](./public/placeholder-contribute.png)
+![Dashboard — Pool progress, member list, and balances](./public/placeholder-dashboard.png)
 
-![History Screenshot](./public/placeholder-history.png)
+![Contribute — Send 10 XLM to the pool](./public/placeholder-contribute.png)
 
-![Schedule Screenshot](./public/placeholder-schedule.png)
+![History — Real-time transaction log with Stellar Expert links](./public/placeholder-history.png)
+
+![Schedule — Payout rotation and Claim Payout button](./public/placeholder-schedule.png)
 
 ---
 
@@ -189,7 +191,7 @@ ipon-pay/
 │   └── ipon-pay-contract/            # Soroban Rust smart contract
 │       └── src/lib.rs                # record_contribution, get_contributions
 ├── proxy.ts                          # Next.js 16 route guard (wallet_connected cookie)
-└── .env.local                        # Environment variables
+└── .env.local                        # Environment variables (not committed — see .gitignore)
 ```
 
 ---
@@ -218,6 +220,11 @@ stellar contract deploy \
 ```
 
 The Soroban call is **fire-and-forget** — a failed RPC call does not affect the Horizon payment settlement.
+
+**Deployed Contract (Testnet):**
+
+- Contract ID: `CAGLGQA5E757DS4GU4JD5PRXS5GAOBRK3TTLXIXF7NA2BT7F3ME4DF5U`
+- [View Contract on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CAGLGQA5E757DS4GU4JD5PRXS5GAOBRK3TTLXIXF7NA2BT7F3ME4DF5U)
 
 ---
 
