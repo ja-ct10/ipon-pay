@@ -3,11 +3,16 @@ import type { ContributionRecord } from './types'
 
 const rpcUrl =
   process.env.NEXT_PUBLIC_SOROBAN_RPC_URL ?? 'https://soroban-testnet.stellar.org'
-const contractId = process.env.NEXT_PUBLIC_SOROBAN_CONTRACT_ID ?? ''
+
+// Read contract ID at call time (not module load time) so env var updates are picked up
+function getContractId(): string {
+  return process.env.NEXT_PUBLIC_SOROBAN_CONTRACT_ID ?? ''
+}
 
 export async function recordContribution(
   record: ContributionRecord,
 ): Promise<void> {
+  const contractId = getContractId()
   if (!contractId) {
     console.warn(
       '[soroban-client] NEXT_PUBLIC_SOROBAN_CONTRACT_ID not set — skipping',
@@ -82,6 +87,7 @@ export async function recordPayout(params: {
   timestamp: bigint
 }): Promise<void> {
   const { poolAddress, poolSecret, recipient, amountStroops, cycleNumber, timestamp } = params
+  const contractId = getContractId()
   if (!contractId) {
     console.warn('[soroban-client] NEXT_PUBLIC_SOROBAN_CONTRACT_ID not set — skipping payout record')
     return
