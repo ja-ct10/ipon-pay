@@ -229,14 +229,8 @@ Both Soroban calls are **fire-and-forget** — a failed RPC call does not affect
 
 **Deployed Contract (Testnet):**
 
-- **Current contract:** `CDB7SE7O5VMN7DQSKCHYG6TVXTDJWULYKXZTSZQVO4DGRGYRFIQSJ44P`
-  - [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDB7SE7O5VMN7DQSKCHYG6TVXTDJWULYKXZTSZQVO4DGRGYRFIQSJ44P)
-  - Records new contributions and payouts going forward from this deployment
-- **Original contract (pre-upgrade):** `CAGLGQA5E757DS4GU4JD5PRXS5GAOBRK3TTLXIXF7NA2BT7F3ME4DF5U`
-  - Historical contributions recorded before the contract upgrade live here
-  - The Stellar blockchain (Horizon) remains the source of truth for all historical payment transactions
-
-> **Note on contract upgrade:** The contract was upgraded to add `record_payout` and improvements. Historical contributions (before the upgrade) are preserved permanently on Horizon and on the original contract ID above. The new contract starts fresh and accumulates records going forward. Run `node scripts/verify-migration.mjs` to compare Horizon history against the current contract state at any time.
+- Contract ID: `CDB7SE7O5VMN7DQSKCHYG6TVXTDJWULYKXZTSZQVO4DGRGYRFIQSJ44P`
+- [View Contract on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDB7SE7O5VMN7DQSKCHYG6TVXTDJWULYKXZTSZQVO4DGRGYRFIQSJ44P)
 
 ---
 
