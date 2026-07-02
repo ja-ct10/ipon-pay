@@ -10,9 +10,9 @@ IponPay brings the centuries-old Filipino rotating savings tradition (Paluwagan)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8)](https://tailwindcss.com)
 [![Soroban](https://img.shields.io/badge/Soroban-Smart%20Contract-purple)](https://soroban.stellar.org)
 
-Access it here: https://iponpay.vercel.app/
+Live Demo link: https://iponpay.vercel.app/
 
-<img width="1918" height="1013" alt="image" src="https://github.com/user-attachments/assets/9896c1f7-51f3-434a-ab8f-8e7e58cf0e77" />
+<img width="1918" height="1013" alt="image" src="https://github.com/user-attachments/assets/ddb85791-01c0-48df-ac53-ef4cdbc5e1a9" />
 
 <img width="1918" height="1012" alt="image" src="https://github.com/user-attachments/assets/3cec521d-09a2-4ac0-968d-98d0c3a416ed" />
 
@@ -301,7 +301,10 @@ Clicking "Connect Wallet" opens the built-in WalletSelector modal so users can p
 
 ### Wallet Selection
 
-> 📸 **Screenshot placeholder** — After running the app, click "Connect Wallet" to see the wallet picker showing all four options: Freighter, xBull, Lobstr, and Albedo.
+<img width="1918" height="1013" alt="image" src="https://github.com/user-attachments/assets/234e9f8f-c66f-4ae3-95a8-f83fa14fce97" />
+
+<img width="1918" height="1012" alt="image" src="https://github.com/user-attachments/assets/4453f364-d57b-49af-a428-656a01aee8a3" />
+
 
 ---
 
