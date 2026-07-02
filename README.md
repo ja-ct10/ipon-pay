@@ -285,7 +285,11 @@ The CI pipeline runs automatically on every push to `main` and on all pull reque
 
 Both jobs run in parallel. All checks must pass before merging to `main`.
 
-> 📸 **Screenshot placeholder** — After pushing this workflow to GitHub, navigate to the Actions tab of the repository to see the pipeline run. Screenshot the passing checks for submission.
+<img width="1918" height="1015" alt="image" src="https://github.com/user-attachments/assets/3c55b0c8-19cb-427e-bce3-5188c6f27c4b" />
+
+<img width="1918" height="1018" alt="image" src="https://github.com/user-attachments/assets/c50e64a3-4d37-47e7-82b3-b42cde886746" />
+
+<img width="1918" height="1017" alt="image" src="https://github.com/user-attachments/assets/04f4a7ab-c52f-483c-8ec4-d3b38e98f74d" />
 
 ---
 
@@ -377,55 +381,28 @@ This is for the record_contribution with transaction hash and is verifiable on S
 
 ---
 
-## 🏆 Level 3 — Orange Belt Submission
-
-### ✅ Submission Checklist
-
-| Requirement                               | Status | Evidence                                                                                                                                                                                         |
-| ----------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Public GitHub repository                  | ✅     | [github.com/ja-ct10/ipon-pay](https://github.com/ja-ct10/ipon-pay)                                                                                                                               |
-| README with complete documentation        | ✅     | This file                                                                                                                                                                                        |
-| Minimum 10+ meaningful commits            | ✅     | 30+ commits                                                                                                                                                                                      |
-| Live demo link                            | ✅     | [iponpay.vercel.app](https://iponpay.vercel.app)                                                                                                                                                 |
-| Contract deployment address               | ✅     | `CAQT4K4DWKWK45TR7FPBZFOJXLZAPWZXQGOPQYNIKH5PXOUH52YPNXY7` — [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CAQT4K4DWKWK45TR7FPBZFOJXLZAPWZXQGOPQYNIKH5PXOUH52YPNXY7) |
-| Transaction hash for contract interaction | ✅     | [de22b3f2be6a...](https://stellar.expert/explorer/testnet/tx/de22b3f2be6a0dc22a66e7b5838345af5493359de1a13df052ffca2bf57f66ce)                                                                   |
-| Mobile responsive UI screenshot           | ✅     | See below                                                                                                                                                                                        |
-| CI/CD pipeline running screenshot         | ✅     | See below                                                                                                                                                                                        |
-| Test output with 3+ passing tests         | ✅     | 35 frontend + 2 contract tests = 37 total                                                                                                                                                        |
-| Demo video link (1–2 min)                 | 📎     | `PLACEHOLDER_DEMO_VIDEO_LINK`                                                                                                                                                                    |
-
 ### 📱 Mobile Responsive UI
 
-> 📸 `PLACEHOLDER_MOBILE_SCREENSHOT` — Take a screenshot of the app at mobile viewport (375px width) showing the Dashboard or Landing page. Use Chrome DevTools → Toggle Device Toolbar → iPhone 14 Pro.
+<img width="1918" height="1017" alt="image" src="https://github.com/user-attachments/assets/32d6fff9-6eb2-4263-9557-3a211226d7aa" />
+
+<img width="1918" height="1017" alt="image" src="https://github.com/user-attachments/assets/68fe6f2f-4a34-4f2c-a7bc-c0eb49aaa891" />
+
+<img width="1918" height="1017" alt="image" src="https://github.com/user-attachments/assets/6a3d5206-4e88-4351-a446-50ef4351b8bd" />
+
+<img width="1918" height="1018" alt="image" src="https://github.com/user-attachments/assets/79256cff-53cc-4461-91bd-c00bead0ab5f" />
+
 
 ### 🔄 CI/CD Pipeline Running
 
-> 📸 `PLACEHOLDER_CI_CD_SCREENSHOT` — Go to https://github.com/ja-ct10/ipon-pay/actions and screenshot the latest successful workflow run showing both "Frontend Tests ✓" and "Soroban Contract Tests ✓" with green checkmarks.
+<img width="1918" height="1020" alt="image" src="https://github.com/user-attachments/assets/1c281c15-50e4-42c5-95a8-48a775132dfd" />
 
 ### 🧪 Test Output (37 passing tests)
 
-> 📸 `PLACEHOLDER_TEST_OUTPUT_SCREENSHOT` — Run `npm test` in your terminal and screenshot the output showing "Test Files 4 passed (4) / Tests 35 passed (35)". Alternatively, screenshot the "Run property-based tests" step in the GitHub Actions log.
+<img width="1918" height="1020" alt="image" src="https://github.com/user-attachments/assets/9ff9cf25-adeb-480f-ac18-de591ab8e501" />
 
 ### 🎬 Demo Video
 
 > 📎 `PLACEHOLDER_DEMO_VIDEO_LINK` — Record a 1–2 minute video walkthrough showing: (1) Connect wallet, (2) View dashboard with pool progress, (3) Send a 10 XLM contribution, (4) See confetti + toast with Stellar Expert link, (5) View transaction in History page. Upload to YouTube/Loom and paste link here.
-
----
-
-### Level 3 Requirements Coverage
-
-| Requirement                              | How IponPay Meets It                                                                                                                                  |
-| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Advanced smart contract development**  | Soroban contract with `record_contribution`, `record_payout`, `get_contributions`, `get_payouts` — event emission, auth checks, struct storage        |
-| **Inter-contract communication**         | Frontend → Horizon payment → Soroban `record_contribution` (dual-write pattern); server-side `/api/payout` → Horizon payout → Soroban `record_payout` |
-| **Event streaming & real-time updates**  | `contract-events.ts` polls Soroban RPC every 15s for `contrib` and `payout` events, deduplicates, and updates UI in real time                         |
-| **CI/CD pipeline setup**                 | GitHub Actions with 2 parallel jobs: frontend tests + Rust contract tests, auto-triggered on push/PR to main                                          |
-| **Smart contract deployment workflow**   | `cargo build --target wasm32-unknown-unknown --release` → `stellar contract deploy --network testnet`                                                 |
-| **Mobile responsive frontend**           | Tailwind responsive breakpoints (320px / 768px / 1280px), hamburger menu on mobile, touch-friendly cards                                              |
-| **Error handling & loading states**      | Skeleton loaders, toast notifications, `mapStellarError()`, retry logic, `classifyWalletError()`                                                      |
-| **Writing tests (contracts + frontend)** | 2 Rust unit tests + 35 property-based tests (fast-check) covering all utility functions                                                               |
-| **Production-ready architecture**        | Server-side pool key, route guards, env-based config, fire-and-forget Soroban calls, no backend DB                                                    |
-| **Documentation & demo**                 | Full README, CONTRIBUTING.md, inline code comments, deployed demo, contract on Stellar Expert                                                         |
 
 ---
 
