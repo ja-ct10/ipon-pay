@@ -4,6 +4,11 @@ export interface WalletState {
   isConnected: boolean;
   isLoading: boolean;
   error: string | null;
+  // ── new fields (multi-wallet-contract-integration) ────────────────────────
+  walletType: string | null;        // e.g. 'freighter' | 'xbull' | 'lobstr' | 'albedo'
+  txStatus: 'pending' | 'success' | 'fail' | null;
+  lastTxHash: string | null;        // Horizon payment tx hash
+  contractTxHash: string | null;    // Soroban record_contribution tx hash
 }
 
 export interface Member {

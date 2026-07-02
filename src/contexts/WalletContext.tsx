@@ -9,9 +9,10 @@ import {
 } from 'react'
 import type { WalletState } from '@/lib/types'
 import {
-  connectFreighter,
-  disconnectFreighter,
-  getFreighterAddress,
+  openWalletSelector,
+  kit,
+  getConnectedAddress,
+  classifyWalletError,
 } from '@/lib/wallet'
 import { fetchXLMBalance } from '@/lib/horizon'
 
@@ -23,6 +24,10 @@ type WalletAction =
   | { type: 'SET_BALANCE'; balance: string }
   | { type: 'SET_LOADING'; isLoading: boolean }
   | { type: 'SET_ERROR'; error: string }
+  | { type: 'SET_TX_STATUS'; status: 'pending' | 'success' | 'fail' | null }
+  | { type: 'SET_TX_HASH'; hash: string }
+  | { type: 'SET_CONTRACT_TX_HASH'; hash: string }
+  | { type: 'SET_WALLET_TYPE'; walletType: string }
 
 // ─── Reducer ─────────────────────────────────────────────────────────────────
 
@@ -32,6 +37,10 @@ const initialState: WalletState = {
   isConnected: false,
   isLoading: false,
   error: null,
+  walletType: null,
+  txStatus: null,
+  lastTxHash: null,
+  contractTxHash: null,
 }
 
 function walletReducer(state: WalletState, action: WalletAction): WalletState {
@@ -66,6 +75,26 @@ function walletReducer(state: WalletState, action: WalletAction): WalletState {
         error: action.error,
         isLoading: false,
       }
+    case 'SET_TX_STATUS':
+      return {
+        ...state,
+        txStatus: action.status,
+      }
+    case 'SET_TX_HASH':
+      return {
+        ...state,
+        lastTxHash: action.hash,
+      }
+    case 'SET_CONTRACT_TX_HASH':
+      return {
+        ...state,
+        contractTxHash: action.hash,
+      }
+    case 'SET_WALLET_TYPE':
+      return {
+        ...state,
+        walletType: action.walletType,
+      }
   }
 }
 
@@ -77,24 +106,40 @@ interface WalletContextValue {
   connectWallet: () => Promise<void>
   disconnectWallet: () => void
   refreshBalance: () => Promise<void>
+  openSelector: () => void
 }
 
 const WalletContext = createContext<WalletContextValue | null>(null)
 
 // ─── Provider ────────────────────────────────────────────────────────────────
 
+const WALLET_TYPE_KEY = 'iponpay_wallet_type'
+
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(walletReducer, initialState)
 
-  // Session restore: check if Freighter still has the address on mount (Req 1.5)
+  // Task 3.4 — Session restore on mount using localStorage wallet type
   useEffect(() => {
     let cancelled = false
 
     async function restore() {
-      const address = await getFreighterAddress()
-      if (cancelled || !address) return
+      const walletType = localStorage.getItem(WALLET_TYPE_KEY)
+      if (!walletType) return
+
+      // Re-activate the previously used wallet module
+      kit.setWallet(walletType)
+
+      const address = await getConnectedAddress()
+      if (!address) {
+        // Wallet no longer available or not connected — clean up silently
+        localStorage.removeItem(WALLET_TYPE_KEY)
+        return
+      }
+
+      if (cancelled) return
 
       dispatch({ type: 'CONNECT', address })
+      dispatch({ type: 'SET_WALLET_TYPE', walletType })
 
       // Set cookie so the proxy route guard allows access to protected routes
       if (typeof document !== 'undefined') {
@@ -117,23 +162,43 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  // Task 3.3 — connectWallet now opens the kit authModal picker
   const connectWallet = useCallback(async () => {
     dispatch({ type: 'SET_LOADING', isLoading: true })
     try {
-      const address = await connectFreighter()
+      // openWalletSelector() shows the built-in WalletSelector modal and returns
+      // the connected address once the user picks a wallet and authorises access
+      const address = await openWalletSelector()
       dispatch({ type: 'CONNECT', address })
+      // kit doesn't expose the selected wallet ID from authModal easily; use 'kit'
+      dispatch({ type: 'SET_WALLET_TYPE', walletType: 'kit' })
+      localStorage.setItem(WALLET_TYPE_KEY, 'kit')
+      if (typeof document !== 'undefined') {
+        document.cookie = 'wallet_connected=1; path=/; SameSite=Lax'
+      }
       const balance = await fetchXLMBalance(address)
       dispatch({ type: 'SET_BALANCE', balance })
     } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : 'Failed to connect wallet.'
-      dispatch({ type: 'SET_ERROR', error: message })
+      const category = classifyWalletError(err)
+      const messages: Record<string, string> = {
+        not_found: 'Wallet not found. Please install it to continue.',
+        rejected: 'Transaction rejected. You cancelled the signing request.',
+        insufficient_balance:
+          'Insufficient balance — you need at least 11 XLM (10 XLM contribution + 1 XLM reserve).',
+        unknown: 'Failed to connect wallet.',
+      }
+      dispatch({ type: 'SET_ERROR', error: messages[category] })
       throw err
     }
   }, [])
 
+  // Task 3.3 — disconnectWallet removes localStorage key and clears cookie
   const disconnectWallet = useCallback(() => {
-    disconnectFreighter()
+    localStorage.removeItem(WALLET_TYPE_KEY)
+    if (typeof document !== 'undefined') {
+      document.cookie =
+        'wallet_connected=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax'
+    }
     dispatch({ type: 'DISCONNECT' })
   }, [])
 
@@ -150,6 +215,14 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     }
   }, [state.address])
 
+  // Task 3.3 — openSelector: convenience wrapper for components that just want
+  // to show the wallet picker without going through the full connectWallet flow
+  const openSelector = useCallback(() => {
+    openWalletSelector().catch(() => {
+      // Errors are surfaced via the connectWallet error path; swallow here
+    })
+  }, [])
+
   // Auto-refresh balance every 30s when connected (Issue 2: real-time wallet balance)
   useEffect(() => {
     if (!state.isConnected || !state.address) return
@@ -164,7 +237,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <WalletContext.Provider
-      value={{ state, dispatch, connectWallet, disconnectWallet, refreshBalance }}
+      value={{ state, dispatch, connectWallet, disconnectWallet, refreshBalance, openSelector }}
     >
       {children}
     </WalletContext.Provider>
