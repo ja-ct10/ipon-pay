@@ -3,8 +3,9 @@
 import { useState, useCallback } from 'react'
 import { CheckIcon, CopyIcon, UserCircle2Icon, ExternalLinkIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { TransactionStatusBadge } from '@/components/ui/TransactionStatusBadge'
 import { useWallet } from '@/contexts/WalletContext'
-import { hasInsufficientFunds } from '@/lib/utils'
+import { hasInsufficientFunds } from '@/lib/wallet'
 import { GROUP_DATA } from '@/lib/mock-data'
 import { ConfirmModal } from './ConfirmModal'
 import { SuccessConfetti } from './SuccessConfetti'
@@ -109,13 +110,31 @@ export function ContributionForm({ onSuccess, alreadyPaid = false }: Contributio
           <span className="text-xl font-bold">{CONTRIBUTION_AMOUNT} <span className="text-sm font-normal text-muted-foreground">XLM</span></span>
         </div>
 
-        {insufficient && <p role="alert" className="text-xs text-destructive">Insufficient balance — need at least {CONTRIBUTION_AMOUNT + RESERVE} XLM</p>}
+        {insufficient && <p role="alert" className="text-xs text-destructive">Insufficient balance — you need at least 11 XLM (10 XLM contribution + 1 XLM reserve).</p>}
         {!poolAddress && <p role="alert" className="text-xs text-destructive">Pool address not configured</p>}
 
         <Button className="w-full rounded-full" disabled={!canSend} onClick={() => setShowModal(true)}>
           Send 10 XLM to Pool
         </Button>
       </div>
+
+      {/* Transaction status badges — persistent from wallet state (Req 4.6, 4.8, 4.9, 6.1, 6.3) */}
+      {state.txStatus !== null && (
+        <div className="space-y-2 mt-4">
+          <TransactionStatusBadge
+            status={state.txStatus}
+            txHash={state.lastTxHash}
+            label="Payment TX"
+          />
+          {state.contractTxHash && (
+            <TransactionStatusBadge
+              status="success"
+              txHash={state.contractTxHash}
+              label="Contract TX"
+            />
+          )}
+        </div>
+      )}
 
       {senderAddress && poolAddress && (
         <ConfirmModal open={showModal} onClose={() => setShowModal(false)} sender={senderAddress} poolAddress={poolAddress} onSuccess={handleSuccess} />

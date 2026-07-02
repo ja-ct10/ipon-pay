@@ -273,18 +273,77 @@ Tests cover utility functions with property-based testing using `fast-check`:
 
 ## 🛠️ Tech Stack
 
-| Layer          | Technology                              |
-| -------------- | --------------------------------------- |
-| Framework      | Next.js 16 (App Router)                 |
-| Language       | TypeScript 5                            |
-| Styling        | Tailwind CSS v4 + shadcn/ui             |
-| Animations     | Framer Motion                           |
-| Blockchain     | Stellar Testnet                         |
-| Wallet         | Freighter (`@stellar/freighter-api` v6) |
-| Horizon Client | `@stellar/stellar-sdk` v16              |
-| Smart Contract | Soroban (Rust)                          |
-| Testing        | Vitest + fast-check (property-based)    |
-| Deployment     | Vercel                                  |
+| Layer          | Technology                                           |
+| -------------- | ---------------------------------------------------- |
+| Framework      | Next.js 16 (App Router)                              |
+| Language       | TypeScript 5                                         |
+| Styling        | Tailwind CSS v4 + shadcn/ui                          |
+| Animations     | Framer Motion                                        |
+| Blockchain     | Stellar Testnet                                      |
+| Wallet         | StellarWalletsKit (Freighter, xBull, Lobstr, Albedo) |
+| Horizon Client | `@stellar/stellar-sdk` v16                           |
+| Smart Contract | Soroban (Rust)                                       |
+| Testing        | Vitest + fast-check (property-based)                 |
+| Deployment     | Vercel                                               |
+
+---
+
+## 🔌 Multi-Wallet Support
+
+IponPay uses [StellarWalletsKit](https://github.com/Creit-Tech/Stellar-Wallets-Kit) to support four wallet providers through a single unified "Connect Wallet" button — no per-wallet code required:
+
+- **[Freighter](https://freighter.app)** — Browser extension wallet for Chrome/Edge/Firefox
+- **[xBull](https://xbull.app)** — Browser extension and web wallet
+- **[Lobstr](https://lobstr.co)** — Mobile and web wallet
+- **[Albedo](https://albedo.link)** — Web-based Stellar signer (no install required)
+
+Clicking "Connect Wallet" opens the built-in WalletSelector modal so users can pick from all four providers. The selected wallet is remembered across page reloads via `localStorage`.
+
+### Wallet Selection
+
+> 📸 **Screenshot placeholder** — After running the app, click "Connect Wallet" to see the wallet picker showing all four options: Freighter, xBull, Lobstr, and Albedo.
+
+---
+
+## 🔍 Transaction Hash
+
+A verified `record_contribution` call on Stellar Testnet:
+
+**[de22b3f2be6a0dc22a66e7b5838345af5493359de1a13df052ffca2bf57f66ce](https://stellar.expert/explorer/testnet/tx/de22b3f2be6a0dc22a66e7b5838345af5493359de1a13df052ffca2bf57f66ce)**
+
+This transaction was submitted from the pool address via the contribution flow and is verifiable on Stellar Expert.
+
+---
+
+## ⚙️ Setup
+
+### Step-by-step
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/ja-ct10/ipon-pay.git && cd ipon-pay
+   ```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+3. **Create `.env.local`** in the project root with the required variables (see table below)
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+5. Open [http://localhost:3000](http://localhost:3000)
+
+### Environment Variables
+
+| Variable Name                     | Purpose                                                                | Example Value                                              |
+| --------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `NEXT_PUBLIC_SOROBAN_CONTRACT_ID` | Deployed Soroban contract address                                      | `CAQT4K4DWKWK45TR7FPBZFOJXLZAPWZXQGOPQYNIKH5PXOUH52YPNXY7` |
+| `NEXT_PUBLIC_POOL_ADDRESS`        | Pool's Stellar public key                                              | `GBQFOMWQPFJ5FTYXOASSVQOQ2W4XD7MXYGRFDZB7E52VXOW2ZQIGDQEH` |
+| `NEXT_PUBLIC_STELLAR_NETWORK`     | Network to use                                                         | `TESTNET`                                                  |
+| `POOL_SECRET_KEY`                 | Pool's Stellar secret key (server-side only, never exposed to browser) | `<redacted>`                                               |
+| `NEXT_PUBLIC_SOROBAN_RPC_URL`     | Soroban RPC endpoint                                                   | `https://soroban-testnet.stellar.org`                      |
+| `NEXT_PUBLIC_HORIZON_URL`         | Horizon API endpoint                                                   | `https://horizon-testnet.stellar.org`                      |
 
 ---
 

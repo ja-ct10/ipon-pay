@@ -51,7 +51,20 @@ export function TransactionRow({ tx, onClick }: TransactionRowProps) {
         {formatTimestamp(tx.timestamp)}
       </td>
       <td className="px-4 py-3 text-sm font-mono text-muted-foreground">
-        {truncateAddress(tx.txHash)}
+        {tx.txHash ? (
+          <a
+            href={`https://stellar.expert/explorer/testnet/tx/${tx.txHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono text-muted-foreground hover:text-foreground transition-colors"
+            onClick={(e) => e.stopPropagation()}
+            aria-label={`View transaction ${tx.txHash} on Stellar Expert`}
+          >
+            {tx.txHash.slice(0, 6)}…{tx.txHash.slice(-4)}
+          </a>
+        ) : (
+          <span className="text-muted-foreground">—</span>
+        )}
       </td>
       <td className="px-4 py-3">
         <span

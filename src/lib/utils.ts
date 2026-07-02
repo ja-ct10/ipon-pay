@@ -60,7 +60,7 @@ export function mapStellarError(code: string): string {
       'Transaction authorization failed. Please reconnect your wallet.',
     tx_failed: 'Transaction failed. Please try again.',
   };
-  return errorMap[code] ?? 'Transaction failed. Please try again.';
+  return Object.prototype.hasOwnProperty.call(errorMap, code) ? errorMap[code] : 'Transaction failed. Please try again.';
 }
 
 // Requirement 5.2 — update member payment status
