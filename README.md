@@ -402,7 +402,7 @@ This is for the record_contribution with transaction hash and is verifiable on S
 
 ### 🎬 Demo Video
 
-> 📎 `PLACEHOLDER_DEMO_VIDEO_LINK` — Record a 1–2 minute video walkthrough showing: (1) Connect wallet, (2) View dashboard with pool progress, (3) Send a 10 XLM contribution, (4) See confetti + toast with Stellar Expert link, (5) View transaction in History page. Upload to YouTube/Loom and paste link here.
+https://drive.google.com/file/d/1nPBrxuOB2pl12eXOmO5mFmWFkfvkmGPy/view?usp=sharing
 
 ---
 
