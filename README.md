@@ -310,11 +310,22 @@ Clicking "Connect Wallet" opens the built-in WalletSelector modal so users can p
 
 ## 🔍 Transaction Hash
 
-A verified `record_contribution` call on Stellar Testnet:
+Every transaction hash can be viewed in the History page upon clicking the specific row data. 
 
-**[de22b3f2be6a0dc22a66e7b5838345af5493359de1a13df052ffca2bf57f66ce](https://stellar.expert/explorer/testnet/tx/de22b3f2be6a0dc22a66e7b5838345af5493359de1a13df052ffca2bf57f66ce)**
+This is for the record_payout with transaction hash and is verifiable on Stellar Expert:
 
-This transaction was submitted from the pool address via the contribution flow and is verifiable on Stellar Expert.
+<img width="1918" height="1013" alt="image" src="https://github.com/user-attachments/assets/9ee775df-5978-465c-99c5-5f3b32b9d428" />
+
+<img width="1918" height="1013" alt="image" src="https://github.com/user-attachments/assets/8f49ed07-21d2-4061-aa77-e2e339a78aac" />
+
+This is for the record_contribution with transaction hash and is verifiable on Stellar Expert:
+
+<img width="1918" height="1001" alt="image" src="https://github.com/user-attachments/assets/048fe1d4-670f-4a36-9158-32c15c8996df" />
+
+<img width="1918" height="1013" alt="image" src="https://github.com/user-attachments/assets/9c8fffe8-6386-46a6-854c-d59234ea2913" />
+
+<img width="1918" height="1017" alt="image" src="https://github.com/user-attachments/assets/b24de781-946f-41fc-be23-563163ea8ac7" />
+
 
 ---
 
