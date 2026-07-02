@@ -127,7 +127,7 @@ mod test {
         let env = Env::default();
         env.mock_all_auths();
 
-        let contract_id = env.register(IponPayContract, ());
+        let contract_id = env.register_contract(None, IponPayContract);
         let client = IponPayContractClient::new(&env, &contract_id);
 
         let sender = Address::generate(&env);
@@ -143,7 +143,7 @@ mod test {
         let env = Env::default();
         env.mock_all_auths();
 
-        let contract_id = env.register(IponPayContract, ());
+        let contract_id = env.register_contract(None, IponPayContract);
         let client = IponPayContractClient::new(&env, &contract_id);
 
         let pool = Address::generate(&env);
