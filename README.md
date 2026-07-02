@@ -9,6 +9,7 @@ IponPay brings the centuries-old Filipino rotating savings tradition (Paluwagan)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8)](https://tailwindcss.com)
 [![Soroban](https://img.shields.io/badge/Soroban-Smart%20Contract-purple)](https://soroban.stellar.org)
+[![CI](https://github.com/ja-ct10/ipon-pay/actions/workflows/ci.yml/badge.svg)](https://github.com/ja-ct10/ipon-pay/actions/workflows/ci.yml)
 
 Live Demo link: https://iponpay.vercel.app/
 
@@ -29,7 +30,6 @@ Live Demo link: https://iponpay.vercel.app/
 <img width="1918" height="1007" alt="image" src="https://github.com/user-attachments/assets/4028f16e-0871-402c-96da-08423cd03f2c" />
 
 <img width="1918" height="1012" alt="image" src="https://github.com/user-attachments/assets/587f32f6-dd89-4c77-8d94-f4df5f90f059" />
-
 
 ---
 
@@ -245,7 +245,6 @@ Both Soroban calls are **fire-and-forget** — a failed RPC call does not affect
 
 <img width="1918" height="1012" alt="image" src="https://github.com/user-attachments/assets/ebdee382-6038-43b4-8d33-8e6d7b7d8bf2" />
 
-
 ---
 
 ## 🧪 Running Tests
@@ -268,6 +267,25 @@ Tests cover utility functions with property-based testing using `fast-check`:
 - Pool progress calculation
 - Transaction sort order and filter correctness
 - Insufficient funds guard
+
+---
+
+## 🔄 CI/CD Pipeline
+
+IponPay uses GitHub Actions for continuous integration and deployment.
+
+**Pipeline:** [View on GitHub Actions](https://github.com/ja-ct10/ipon-pay/actions/workflows/ci.yml)
+
+The CI pipeline runs automatically on every push to `main` and on all pull requests:
+
+| Job             | What it does                                                                                                                 |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `test`          | Installs dependencies, runs 35+ property-based tests (vitest + fast-check), type-checks with tsc, and builds the Next.js app |
+| `contract-test` | Compiles the Soroban Rust contract, runs 2 on-chain unit tests, and builds the WASM binary                                   |
+
+Both jobs run in parallel. All checks must pass before merging to `main`.
+
+> 📸 **Screenshot placeholder** — After pushing this workflow to GitHub, navigate to the Actions tab of the repository to see the pipeline run. Screenshot the passing checks for submission.
 
 ---
 
