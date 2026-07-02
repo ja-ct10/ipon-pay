@@ -29,8 +29,6 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        # --legacy-peer-deps: resolves peer conflict from @trezor/connect-plugin-stellar
-        # --ignore-scripts: skips broken postinstall yarn script in @trezor/blockchain-link
         run: npm install --legacy-peer-deps --ignore-scripts
 
       - name: Run property-based tests
@@ -43,21 +41,18 @@ jobs:
         run: npm run build
 
   contract-test:
-    name: Rust/Soroban Contract Tests
+    name: Soroban Contract Tests
     runs-on: ubuntu-latest
-    continue-on-error: false
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Rust 1.81 (soroban-sdk 21.x requires <= 1.81 for wasm32 target)
-        uses: dtolnay/rust-toolchain@1.81
-        with:
-          targets: wasm32-unknown-unknown
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Cache cargo registry
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
@@ -68,7 +63,4 @@ jobs:
             ${{ runner.os }}-cargo-
 
       - name: Run contract unit tests
-        run: cargo test --manifest-path contracts/ipon-pay-contract/Cargo.toml
-
-      - name: Build contract WASM
-        run: cargo build --target wasm32-unknown-unknown --release --manifest-path contracts/ipon-pay-contract/Cargo.toml
+        run: cargo test --locked --manifest-path contracts/ipon-pay-contract/Cargo.toml
