@@ -10,7 +10,6 @@ import {
 import type { WalletState } from '@/lib/types'
 import {
   openWalletSelector,
-  kit,
   getConnectedAddress,
   classifyWalletError,
 } from '@/lib/wallet'
@@ -126,9 +125,8 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       const walletType = localStorage.getItem(WALLET_TYPE_KEY)
       if (!walletType) return
 
-      // Re-activate the previously used wallet module
-      kit.setWallet(walletType)
-
+      // Don't call kit.setWallet() — the kit's internal state persists via the
+      // browser extension. Just try to get the address from whatever wallet is active.
       const address = await getConnectedAddress()
       if (!address) {
         // Wallet no longer available or not connected — clean up silently
@@ -170,9 +168,11 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       // the connected address once the user picks a wallet and authorises access
       const address = await openWalletSelector()
       dispatch({ type: 'CONNECT', address })
-      // kit doesn't expose the selected wallet ID from authModal easily; use 'kit'
-      dispatch({ type: 'SET_WALLET_TYPE', walletType: 'kit' })
-      localStorage.setItem(WALLET_TYPE_KEY, 'kit')
+      // After authModal, the kit has the wallet set internally.
+      // We store 'connected' as a flag — on restore we use getConnectedAddress()
+      // which works without needing to re-set a specific wallet module.
+      dispatch({ type: 'SET_WALLET_TYPE', walletType: 'connected' })
+      localStorage.setItem(WALLET_TYPE_KEY, 'connected')
       if (typeof document !== 'undefined') {
         document.cookie = 'wallet_connected=1; path=/; SameSite=Lax'
       }
