@@ -1,6 +1,5 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { cn } from '@/lib/utils'
 import type { GroupData } from '@/lib/types'
@@ -12,14 +11,10 @@ interface StatCardProps {
 
 function StatCard({ label, value }: StatCardProps) {
   return (
-    <motion.div
-      whileHover={{ scale: 1.02 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      className="rounded-2xl bg-card border border-white/7 p-5 flex flex-col gap-1.5"
-    >
+    <div className="rounded-2xl bg-card border border-white/7 p-5 flex flex-col gap-1.5 transition-all duration-200 hover:border-emerald-500/15 hover:shadow-md hover:shadow-emerald-500/5">
       <span className="text-xs text-muted-foreground tracking-wider uppercase font-medium">{label}</span>
       <span className="text-2xl font-bold tracking-tight truncate">{value}</span>
-    </motion.div>
+    </div>
   )
 }
 

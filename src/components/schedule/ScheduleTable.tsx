@@ -45,17 +45,22 @@ export function ScheduleTable({
       }
 
       toast.success(
-        <span>
-          🎉 Payout sent! {targetPoolAmount.toFixed(2)} XLM → your wallet.{' '}
+        <div className="flex flex-col gap-1.5">
+          <span className="text-sm font-medium">
+            🎉 Payout sent!
+          </span>
+          <span className="text-xs text-muted-foreground">
+            {targetPoolAmount.toFixed(2)} XLM has been transferred to your wallet.
+          </span>
           <a
             href={stellarExpertLink(data.txHash)}
             target="_blank"
             rel="noopener noreferrer"
-            className="underline"
+            className="inline-flex items-center gap-1 text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors mt-0.5"
           >
-            View on Stellar Expert
+            View on Stellar Expert →
           </a>
-        </span>,
+        </div>,
         { duration: 8000 },
       )
     } catch (err: unknown) {

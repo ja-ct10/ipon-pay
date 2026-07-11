@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 
 interface ConnectButtonProps {
   className?: string
+  hideProviders?: boolean
 }
 
 const WALLET_INSTALL_URLS: Record<string, { name: string; url: string }> = {
@@ -19,7 +20,7 @@ const WALLET_INSTALL_URLS: Record<string, { name: string; url: string }> = {
   albedo: { name: 'Albedo', url: 'https://albedo.link' },
 }
 
-export function ConnectButton({ className }: ConnectButtonProps) {
+export function ConnectButton({ className, hideProviders = false }: ConnectButtonProps) {
   const { state, connectWallet, disconnectWallet } = useWallet()
   const router = useRouter()
 
@@ -95,9 +96,11 @@ export function ConnectButton({ className }: ConnectButtonProps) {
         Connect Wallet
       </Button>
       {/* Wallet name labels — visible before clicking (Req 1.6) */}
-      <p className="text-xs text-muted-foreground text-center">
-        Freighter · xBull · Lobstr · Albedo
-      </p>
+      {!hideProviders && (
+        <p className="text-xs text-muted-foreground text-center">
+          Freighter · xBull · Lobstr · Albedo
+        </p>
+      )}
       {/* Wallet-not-found: show install links for all supported wallets (Req 2.4) */}
       {state.error && state.error.toLowerCase().includes('not found') && (
         <div className="flex flex-wrap gap-2 justify-center mt-1" role="alert">

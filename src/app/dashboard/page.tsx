@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { motion } from 'framer-motion'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { BalanceCard } from '@/components/dashboard/BalanceCard'
 import { PoolBalanceCard } from '@/components/dashboard/PoolBalanceCard'
@@ -18,6 +19,20 @@ import type { Member, CycleEntry } from '@/lib/types'
 
 const POLL_INTERVAL_MS = 15_000
 const MIN_MEMBERS = 2
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0 },
+}
+
+const stagger = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+}
 
 export default function DashboardPage() {
   const { state, refreshBalance } = useWallet()
@@ -54,7 +69,7 @@ export default function DashboardPage() {
     return () => clearInterval(interval)
   }, [syncFromChain])
 
-  // Soroban contract event stream (Req 5.1, 5.7, 5.8)
+  // Soroban contract event stream
   useEffect(() => {
     const contractId = process.env.NEXT_PUBLIC_SOROBAN_CONTRACT_ID ?? ''
     if (!contractId) return
@@ -62,13 +77,11 @@ export default function DashboardPage() {
     function onContrib(event: ContribEvent) {
       const xlmAmount = Number(event.amountStroops) / 10_000_000
 
-      // Update pool collected amount (Req 5.2)
       setPoolCollected((prev) => prev + xlmAmount)
 
-      // Update matching member's paid status (Req 5.2)
       setMembers((prev) => {
         const matchExists = prev.some((m) => m.address === event.sender)
-        if (!matchExists) return prev  // Req 5.9: unknown sender — only update pool
+        if (!matchExists) return prev
         const syntheticTx = {
           txHash: event.id,
           sender: event.sender,
@@ -80,7 +93,6 @@ export default function DashboardPage() {
         return updateMemberStatus(prev, syntheticTx)
       })
 
-      // Trigger confetti for the connected user's own contribution (Req 5.6)
       if (state.address && event.sender === state.address) {
         setShowConfetti(true)
         setTimeout(() => setShowConfetti(false), 3000)
@@ -88,7 +100,6 @@ export default function DashboardPage() {
     }
 
     function onPayout(event: PayoutEvent) {
-      // Find the matching cycle and mark it completed (Req 5.3)
       setSchedule((prev) =>
         prev.map((cycle) =>
           cycle.cycleNumber === event.cycleNumber
@@ -96,13 +107,11 @@ export default function DashboardPage() {
             : cycle,
         ),
       )
-      // Refresh wallet balance after a payout (Req 5.3)
       refreshBalance().catch(() => {})
     }
 
     startEventStream(contractId, onContrib, onPayout)
 
-    // Stop stream on unmount (Req 5.8)
     return () => stopEventStream()
   }, [state.address, refreshBalance])
 
@@ -118,13 +127,66 @@ export default function DashboardPage() {
 
   return (
     <PageWrapper>
-      <main className="container mx-auto px-4 py-8 space-y-6">
-        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-        <BalanceCard />
-        <PoolBalanceCard />
-        <GroupStats data={dynamicGroupData} nextRecipientName={nextRecipientName} isLoading={isLoading} />
-        <PoolProgress collected={poolCollected} target={target} />
-        <MemberList members={members} connectedAddress={state.address} />
+      <main className="container mx-auto px-4 py-8 max-w-5xl">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+          className="mb-8"
+        >
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Your group savings overview at a glance.
+          </p>
+        </motion.div>
+
+        {/* Balance cards — side by side on desktop */}
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          animate="visible"
+          className="grid gap-5 sm:grid-cols-2 mb-6"
+        >
+          <motion.div variants={fadeUp} transition={{ duration: 0.4, ease: 'easeOut' }}>
+            <BalanceCard />
+          </motion.div>
+          <motion.div variants={fadeUp} transition={{ duration: 0.4, ease: 'easeOut' }}>
+            <PoolBalanceCard />
+          </motion.div>
+        </motion.div>
+
+        {/* Group stats */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          transition={{ duration: 0.4, ease: 'easeOut', delay: 0.2 }}
+          className="mb-6"
+        >
+          <GroupStats data={dynamicGroupData} nextRecipientName={nextRecipientName} isLoading={isLoading} />
+        </motion.div>
+
+        {/* Pool progress */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          transition={{ duration: 0.4, ease: 'easeOut', delay: 0.3 }}
+          className="mb-6"
+        >
+          <PoolProgress collected={poolCollected} target={target} />
+        </motion.div>
+
+        {/* Members */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          transition={{ duration: 0.4, ease: 'easeOut', delay: 0.4 }}
+        >
+          <MemberList members={members} connectedAddress={state.address} />
+        </motion.div>
       </main>
       <SuccessConfetti show={showConfetti} onDismiss={() => setShowConfetti(false)} />
     </PageWrapper>

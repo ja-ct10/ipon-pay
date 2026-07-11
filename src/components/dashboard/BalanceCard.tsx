@@ -32,11 +32,12 @@ export function BalanceCard({ className }: BalanceCardProps) {
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      initial={{ opacity: 0, scale: 0.97 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
       className={cn('w-full', className)}
     >
-      <div className="rounded-2xl border border-white/7 bg-card p-6">
+      <div className="rounded-2xl border border-white/7 bg-card p-6 transition-all duration-200 hover:border-emerald-500/15 hover:shadow-lg hover:shadow-emerald-500/5">
         <div className="flex items-start justify-between gap-4">
           {/* Left: label + balance */}
           <div className="flex flex-col gap-1 min-w-0">
@@ -89,10 +90,10 @@ export function BalanceCard({ className }: BalanceCardProps) {
           </div>
 
           {/* Right: wallet icon */}
-          <div className="rounded-xl bg-emerald-500/10 p-3 text-emerald-500 shrink-0">
+          <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/15 p-3 text-emerald-500 shrink-0">
             <WalletIcon
               aria-hidden="true"
-              className="size-8"
+              className="size-7"
               strokeWidth={1.5}
             />
           </div>

@@ -1,8 +1,10 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/layout/Providers'
 import { Toaster } from '@/components/ui/sonner'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 
 const inter = Inter({
   variable: '--font-inter',
@@ -14,6 +16,11 @@ const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
 })
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+}
 
 export const metadata: Metadata = {
   title: 'IponPay — Blockchain Paluwagan',
@@ -57,6 +64,8 @@ export default function RootLayout({
           {children}
         </Providers>
         <Toaster richColors duration={5000} position="bottom-right" />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
